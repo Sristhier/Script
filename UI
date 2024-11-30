@@ -1,614 +1,1791 @@
+-- Services
+local players = game:GetService("Players")
+local tweenService = game:GetService("TweenService")
+local runService = game:GetService("RunService")
+local coreGui = game:GetService("CoreGui")
+local lp = game:GetService("Players").LocalPlayer
+local mouse = lp:GetMouse()
+local uis = game:GetService("UserInputService")
 
---<>----<>----<>----< Services >----<>----<>----<>--
 
-local ProtectPremium = true
+-- Variables
+local viewport = workspace.CurrentCamera.ViewportSize
+local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
 
-AnalyticsService = game:GetService("AnalyticsService")
-CollectionService = game:GetService("CollectionService")
-DataStoreService = game:GetService("DataStoreService")
-HttpService = game:GetService("HttpService")
-Lighting = game:GetService("Lighting")
-MarketplaceService = game:GetService("MarketplaceService")
-Players = game:GetService("Players")
-ReplicatedFirst = game:GetService("ReplicatedFirst")
-ReplicatedStorage = game:GetService("ReplicatedStorage")
-RunService = game:GetService("RunService")
-ServerScriptService = game:GetService("ServerScriptService")
-ServerStorage = game:GetService("ServerStorage")
-SoundService = game:GetService("SoundService")
-StarterGui = game:GetService("StarterGui")
-StarterPack = game:GetService("StarterPack")
-StarterPlayer = game:GetService("StarterPlayer")
-TeleportService = game:GetService("TeleportService")
-TweenService = game:GetService("TweenService")
-Teams = game:GetService("Teams")
-VirtualUser = game:GetService("VirtualUser")
-Workspace = game:GetService("Workspace")
-UserInputService = game:GetService("UserInputService")
-VirtualInputManager = game:GetService("VirtualInputManager")
-ContextActionService = game:GetService("ContextActionService")
-GuiService = game:GetService("GuiService")
 
---<>----<>----<>----< Variables >----<>----<>----<>--
-local LocalPlayer = Players.LocalPlayer
-local LocalCharacter = LocalPlayer.Character
-local HumanoidRootPart = LocalCharacter:FindFirstChild("HumanoidRootPart")
-local ActiveFolder = Workspace:FindFirstChild("active")
-local PlayerGUI = LocalPlayer:FindFirstChildOfClass("PlayerGui")
 
-local AutoFreeze = false
-local autoShake = false
-local AutoFish = false
-local autoShake2 = false
-local autoShake3 = false
-local AutoZoneCast = false
-local autoShakeDelay = 0.3
-local autoReel = false
-local AutoCast = false
-local Noclip = false
-local AntiDrown = false
-local WebhookLog = false
-local AutoSell = false
-local AntiAfk = false
-local AutoAppraiser = false
-local Keybind = Enum.KeyCode.F
+local Library = {}
 
---<>----<>----<>----< GUI >----<>----<>----<>--
-print("Loading KaosX..")
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sristhier/Script/refs/heads/main/UI"))()
-local LockGUI = Library:new{
-    name = '<font color="rgb(255, 255, 255)">KaosX</font> <font color="rgb(0, 200, 200)">ALPHA</font>'
-}
 
-local MainTab = LockGUI:CreateTab({
-    name = "Main",
-    icon = "rbxassetid://18182790592"
-})
-local MiscTab = LockGUI:CreateTab({
-    name = "Misc",
-    icon = "rbxassetid://18182792140"
-})
-local PlayerTab = LockGUI:CreateTab({
-    name = "Player",
-    icon = "rbxassetid://18182792890"
-})
-local TeleportTab = LockGUI:CreateTab({
-    name = "Teleport",
-    icon = "rbxassetid://18182794282"
-})
-local InfoTab = LockGUI:CreateTab({
-    name = "Credits",
-    icon = "rbxassetid://18182795417"
-})
-
-local MainSection = MainTab:CreateSection("Main Section") 
-
-local InfoLabel = InfoTab:Label({message = "KaosX\nScript in Development\nNot Open yet 🔴"})
-
-MainTab:Toggle({
-    callback = function()
-
-    end,
-    title = "Auto Fish"
-})
-
-MiscTab:Toggle({
-    callback = function(v)
-        autoShake3 = v
-    end,
-    title = "No Shake Delay"
-})
-
---<>----<>----<>----< Tables >----<>----<>----<>--
-local teleportSpots = {
-    altar = CFrame.new(1296.320068359375, -808.5519409179688, -298.93817138671875),
-    arch = CFrame.new(998.966796875, 126.6849365234375, -1237.1434326171875),
-    birch = CFrame.new(1742.3203125, 138.25787353515625, -2502.23779296875),
-    brine = CFrame.new(-1794.10596, -145.849701, -3302.92358, -5.16176224e-05, 3.10316682e-06, 0.99999994, 0.119907647, 0.992785037, 3.10316682e-06, -0.992785037, 0.119907647, -5.16176224e-05),
-    deep = CFrame.new(-1510.88672, -237.695053, -2852.90674, 0.573604643, 0.000580655003, 0.81913209, -0.000340352941, 0.999999762, -0.000470530824, -0.819132209, -8.89541116e-06, 0.573604763),
-    deepshop = CFrame.new(-979.196411, -247.910156, -2699.87207, 0.587748766, 0, 0.809043527, 0, 1, 0, -0.809043527, 0, 0.587748766),
-    enchant = CFrame.new(1296.320068359375, -808.5519409179688, -298.93817138671875),
-    executive = CFrame.new(-29.836761474609375, -250.48486328125, 199.11614990234375),
-    keepers = CFrame.new(1296.320068359375, -808.5519409179688, -298.93817138671875),
-    mod_house = CFrame.new(-30.205902099609375, -249.40594482421875, 204.0529022216797),
-    moosewood = CFrame.new(383.10113525390625, 131.2406005859375, 243.93385314941406),
-    mushgrove = CFrame.new(2501.48583984375, 127.7583236694336, -720.699462890625),
-    roslit = CFrame.new(-1476.511474609375, 130.16842651367188, 671.685302734375),
-    snow = CFrame.new(2648.67578125, 139.06605529785156, 2521.29736328125),
-    snowcap = CFrame.new(2648.67578125, 139.06605529785156, 2521.29736328125),
-    spike = CFrame.new(-1254.800537109375, 133.88555908203125, 1554.2021484375),
-    statue = CFrame.new(72.8836669921875, 138.6964874267578, -1028.4193115234375),
-    sunstone = CFrame.new(-933.259705, 128.143951, -1119.52063, -0.342042685, 0, -0.939684391, 0, 1, 0, 0.939684391, 0, -0.342042685),
-    swamp = CFrame.new(2501.48583984375, 127.7583236694336, -720.699462890625),
-    terrapin = CFrame.new(-143.875244140625, 141.1676025390625, 1909.6070556640625),
-    trident = CFrame.new(-1479.48987, -228.710632, -2391.39307, 0.0435845852, 0, 0.999049723, 0, 1, 0, -0.999049723, 0, 0.0435845852),
-    vertigo = CFrame.new(-112.007278, -492.901093, 1040.32788, -1, 0, 0, 0, 1, 0, 0, 0, -1),
-    volcano = CFrame.new(-1888.52319, 163.847565, 329.238281, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-    wilson = CFrame.new(2938.80591, 277.474762, 2567.13379, 0.4648332, 0, 0.885398269, 0, 1, 0, -0.885398269, 0, 0.4648332),
-    wilsons_rod = CFrame.new(2879.2085, 135.07663, 2723.64233, 0.970463336, -0.168695927, -0.172460333, 0.141582936, -0.180552125, 0.973321974, -0.195333466, -0.968990743, -0.151334763)
-}
-local FishAreas = {
-    Roslit_Bay = CFrame.new(-1663.73889, 149.234116, 495.498016, 0.0380855016, 4.08820178e-08, -0.999274492, 5.74658472e-08, 1, 4.3101906e-08, 0.999274492, -5.90657123e-08, 0.0380855016),
-    Ocean = CFrame.new(7665.104, 125.444443, 2601.59351, 0.999966085, -0.000609769544, -0.00821684115, 0.000612694537, 0.999999762, 0.000353460142, 0.00821662322, -0.000358482561, 0.999966204),
-    Snowcap_Pond = CFrame.new(2778.09009, 283.283783, 2580.323, 1, 7.17688531e-09, -2.22843701e-05, -7.17796267e-09, 1, -4.83369114e-08, 2.22843701e-05, 4.83370712e-08, 1),
-    Moosewood_Docks = CFrame.new(343.2359924316406, 133.61595153808594, 267.0580139160156),
-    Deep_Ocean = CFrame.new(3569.07153, 125.480949, 6697.12695, 0.999980748, -0.00188910461, -0.00591362361, 0.00193980196, 0.999961317, 0.00857902411, 0.00589718809, -0.00859032944, 0.9999457),
-    Vertigo = CFrame.new(-137.697098, -736.86377, 1233.15271, 1, -1.61821543e-08, -2.01375751e-05, 1.6184277e-08, 1, 1.05423091e-07, 2.01375751e-05, -1.0542341e-07, 1),
-    Snowcap_Ocean = CFrame.new(3088.66699, 131.534332, 2587.11304, 1, 4.30694858e-09, -1.19097813e-14, -4.30694858e-09, 1, -2.80603398e-08, 1.17889275e-14, 2.80603398e-08, 1),
-    Harvesters_Spike = CFrame.new(-1234.61523, 125.228767, 1748.57166, 0.999991536, -0.000663080777, -0.00405627443, 0.000725277001, 0.999881923, 0.0153511297, 0.00404561637, -0.0153539423, 0.999873936),
-    SunStone = CFrame.new(-845.903992, 133.172211, -1163.57776, 1, -7.93465915e-09, -2.09446498e-05, 7.93544608e-09, 1, 3.75741536e-08, 2.09446498e-05, -3.75743205e-08, 1),
-    Roslit_Bay_Ocean = CFrame.new(-1708.09302, 155.000015, 384.928009, 1, -9.84460868e-09, -3.24939563e-15, 9.84460868e-09, 1, 4.66220271e-08, 2.79042003e-15, -4.66220271e-08, 1),
-    Moosewood_Pond = CFrame.new(509.735992, 152.000031, 302.173004, 1, -1.78487678e-08, -8.1329488e-14, 1.78487678e-08, 1, 8.45405168e-08, 7.98205428e-14, -8.45405168e-08, 1),
-    Terrapin_Ocean = CFrame.new(58.6469994, 135.499985, 2147.41699, 1, 2.09643041e-08, -5.6023784e-15, -2.09643041e-08, 1, -9.92988376e-08, 3.52064755e-15, 9.92988376e-08, 1),
-    Isonade = CFrame.new(-1060.99902, 121.164787, 953.996033, 0.999958456, 0.000633197487, -0.00909138657, -0.000568434712, 0.999974489, 0.00712434994, 0.00909566507, -0.00711888634, 0.999933302),
-    Moosewood_Ocean = CFrame.new(-167.642715, 125.19548, 248.009521, 0.999997199, -0.000432743778, -0.0023210498, 0.000467110571, 0.99988997, 0.0148265222, 0.00231437827, -0.0148275653, 0.999887407),
-    Roslit_Pond = CFrame.new(-1811.96997, 148.047089, 592.642517, 1, 1.12983072e-08, -2.16573972e-05, -1.12998171e-08, 1, -6.97014357e-08, 2.16573972e-05, 6.97016844e-08, 1),
-    Moosewood_Ocean_Mythical = CFrame.new(252.802994, 135.849625, 36.8839989, 1, -1.98115071e-08, -4.50667564e-15, 1.98115071e-08, 1, 1.22230617e-07, 2.08510289e-15, -1.22230617e-07, 1),
-    Terrapin_Olm = CFrame.new(22.0639992, 182.000015, 1944.36804, 1, 1.14953362e-08, -2.7011112e-15, -1.14953362e-08, 1, -7.09263972e-08, 1.88578841e-15, 7.09263972e-08, 1),
-    The_Arch = CFrame.new(1283.30896, 130.923569, -1165.29602, 1, -5.89772364e-09, -3.3183043e-15, 5.89772364e-09, 1, 3.63913486e-08, 3.10367822e-15, -3.63913486e-08, 1),
-    Scallop_Ocean = CFrame.new(23.2255898, 125.236847, 738.952271, 0.999990165, -0.00109633175, -0.00429760758, 0.00115595153, 0.999902785, 0.0138949333, 0.00428195624, -0.013899764, 0.999894202),
-    SunStone_Hidden = CFrame.new(-1139.55701, 134.62204, -1076.94324, 1, 3.9719481e-09, -1.6278158e-05, -3.97231048e-09, 1, -2.22651142e-08, 1.6278158e-05, 2.22651781e-08, 1),
-    Mushgrove_Stone = CFrame.new(2525.36011, 131.000015, -776.184021, 1, 1.90145943e-08, -3.24206519e-15, -1.90145943e-08, 1, -1.06596836e-07, 1.21516956e-15, 1.06596836e-07, 1),
-    Keepers_Altar = CFrame.new(1307.13599, -805.292236, -161.363998, 1, 2.40881981e-10, -3.25609947e-15, -2.40881981e-10, 1, -1.35044154e-09, 3.255774e-15, 1.35044154e-09, 1),
-    Lava = CFrame.new(-1959.86206, 193.144821, 271.960999, 1, -6.02453598e-09, -2.97388313e-15, 6.02453598e-09, 1, 3.37767716e-08, 2.77039384e-15, -3.37767716e-08, 1),
-    Roslit_Pond_Seaweed = CFrame.new(-1785.2869873046875, 148.15780639648438, 639.9299926757812),    
-}
-local racistPeople = {
-    Witch = CFrame.new(409.638092, 134.451523, 311.403687, -0.74079144, 0, 0.671735108, 0, 1, 0, -0.671735108, 0, -0.74079144),
-    Quiet_Synph = CFrame.new(566.263245, 152.000031, 353.872101, -0.753558397, 0, -0.657381535, 0, 1, 0, 0.657381535, 0, -0.753558397),
-    Pierre = CFrame.new(391.38855, 135.348389, 196.712387, -1, 0, 0, 0, 1, 0, 0, 0, -1),
-    Phineas = CFrame.new(469.912292, 150.69342, 277.954987, 0.886104584, -0, -0.46348536, 0, 1, -0, 0.46348536, 0, 0.886104584),
-    Paul = CFrame.new(381.741882, 136.500031, 341.891022, -1, 0, 0, 0, 1, 0, 0, 0, -1),
-    Shipwright = CFrame.new(357.972595, 133.615967, 258.154541, 0, 0, -1, 0, 1, 0, 1, 0, 0),
-    Angler = CFrame.new(480.102478, 150.501053, 302.226898, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-    Marc = CFrame.new(466.160034, 151.00206, 224.497086, -0.996853352, 0, -0.0792675018, 0, 1, 0, 0.0792675018, 0, -0.996853352),
-    Lucas = CFrame.new(449.33963, 181.999893, 180.689072, 0, 0, 1, 0, 1, -0, -1, 0, 0),
-    Latern_Keeper = CFrame.new(-39.0456772, -246.599976, 195.644363, -1, 0, 0, 0, 1, 0, 0, 0, -1),
-    Latern_Keeper2 = CFrame.new(-17.4230175, -304.970276, -14.529892, -1, 0, 0, 0, 1, 0, 0, 0, -1),
-    Inn_Keeper = CFrame.new(487.458466, 150.800034, 231.498932, -0.564704418, 0, -0.825293183, 0, 1, 0, 0.825293183, 0, -0.564704418),
-    Roslit_Keeper = CFrame.new(-1512.37891, 134.500031, 631.24353, 0.738236904, 0, -0.674541533, 0, 1, 0, 0.674541533, 0, 0.738236904),
-    FishingNpc_1 = CFrame.new(-1429.04138, 134.371552, 686.034424, 0, 0.0168599077, -0.999857903, 0, 0.999857903, 0.0168599077, 1, 0, 0),
-    FishingNpc_2 = CFrame.new(-1778.55408, 149.791779, 648.097107, 0.183140755, 0.0223737024, -0.982832015, 0, 0.999741018, 0.0227586292, 0.983086705, -0.00416803267, 0.183093324),
-    FishingNpc_3 = CFrame.new(-1778.26807, 147.83165, 653.258606, -0.129575253, 0.501478612, 0.855411887, -2.44146213e-05, 0.862683058, -0.505744994, -0.991569638, -0.0655529201, -0.111770131),
-    Henry = CFrame.new(483.539307, 152.383057, 236.296143, -0.789363742, 0, 0.613925934, 0, 1, 0, -0.613925934, 0, -0.789363742),
-    Daisy = CFrame.new(581.550049, 165.490753, 213.499969, -0.964885235, 0, -0.262671858, 0, 1, 0, 0.262671858, 0, -0.964885235),
-    Appraiser = CFrame.new(453.182373, 150.500031, 206.908783, 0, 0, 1, 0, 1, -0, -1, 0, 0),
-    Merchant = CFrame.new(416.690521, 130.302628, 342.765289, -0.249025017, -0.0326484665, 0.967946589, -0.0040341015, 0.999457955, 0.0326734781, -0.968488574, 0.00423171744, -0.249021754),
-    Mod_Keeper = CFrame.new(-39.0905838, -245.141144, 195.837891, -0.948549569, -0.0898146331, -0.303623199, -0.197293222, 0.91766715, 0.34490931, 0.247647122, 0.387066364, -0.888172567),
-    Ashe = CFrame.new(-1709.94055, 149.862411, 729.399536, -0.92290163, 0.0273250472, -0.384064913, 0, 0.997478604, 0.0709675401, 0.385035753, 0.0654960647, -0.920574605),
-    Alfredrickus = CFrame.new(-1520.60632, 142.923264, 764.522034, 0.301733732, 0.390740901, -0.869642735, 0.0273988936, 0.908225596, 0.417582989, 0.952998459, -0.149826124, 0.26333645),
-}
-local itemSpots = {
-    Training_Rod = CFrame.new(457.693848, 148.357529, 230.414307, 1, -0, 0, 0, 0.975410998, 0.220393807, -0, -0.220393807, 0.975410998),
-    Plastic_Rod = CFrame.new(454.425385, 148.169739, 229.172424, 0.951755166, 0.0709736273, -0.298537821, -3.42726707e-07, 0.972884834, 0.231290117, 0.306858391, -0.220131472, 0.925948203),
-    Lucky_Rod = CFrame.new(446.085999, 148.253006, 222.160004, 0.974526405, -0.22305499, 0.0233404674, 0.196993902, 0.901088715, 0.386306256, -0.107199371, -0.371867687, 0.922075212),
-    Kings_Rod = CFrame.new(1375.57642, -810.201721, -303.509247, -0.7490201, 0.662445903, -0.0116144121, -0.0837960541, -0.0773290396, 0.993478119, 0.657227278, 0.745108068, 0.113431036),
-    Flimsy_Rod = CFrame.new(471.107697, 148.36171, 229.642441, 0.841614008, 0.0774728209, -0.534493923, 0.00678436086, 0.988063335, 0.153898612, 0.540036798, -0.13314943, 0.831042409),
-    Nocturnal_Rod = CFrame.new(-141.874237, -515.313538, 1139.04529, 0.161644459, -0.98684907, 1.87754631e-05, 1.87754631e-05, 2.21133232e-05, 1, -0.98684907, -0.161644459, 2.21133232e-05),
-    Fast_Rod = CFrame.new(447.183563, 148.225739, 220.187454, 0.981104493, 1.26492232e-05, 0.193478703, -0.0522461236, 0.962867677, 0.264870107, -0.186291039, -0.269973755, 0.944674432),
-    Carbon_Rod = CFrame.new(454.083618, 150.590073, 225.328827, 0.985374212, -0.170404434, 1.41561031e-07, 1.41561031e-07, 1.7285347e-06, 1, -0.170404434, -0.985374212, 1.7285347e-06),
-    Long_Rod = CFrame.new(485.695038, 171.656326, 145.746109, -0.630167365, -0.776459217, -5.33461571e-06, 5.33461571e-06, -1.12056732e-05, 1, -0.776459217, 0.630167365, 1.12056732e-05),
-    Mythical_Rod = CFrame.new(389.716705, 132.588821, 314.042847, 0, 1, 0, 0, 0, -1, -1, 0, 0),
-    Midas_Rod = CFrame.new(401.981659, 133.258316, 326.325745, 0.16456604, 0.986365497, 0.00103566051, 0.00017541647, 0.00102066994, -0.999999464, -0.986366034, 0.1645661, -5.00679016e-06),
-    Trident_Rod = CFrame.new(-1484.34192, -222.325562, -2194.77002, -0.466092706, -0.536795318, 0.703284025, -0.319611132, 0.843386114, 0.43191275, -0.824988723, -0.0234660208, -0.56466186),
-    Enchated_Altar = CFrame.new(1310.54651, -799.469604, -82.7303467, 0.999973059, 0, 0.00733732153, 0, 1, 0, -0.00733732153, 0, 0.999973059),
-    Bait_Crate = CFrame.new(384.57513427734375, 135.3519287109375, 337.5340270996094),
-    Quality_Bait_Crate = CFrame.new(-177.876, 144.472, 1932.844),
-    Crab_Cage = CFrame.new(474.803589, 149.664566, 229.49469, -0.721874595, 0, 0.692023814, 0, 1, 0, -0.692023814, 0, -0.721874595),
-    GPS = CFrame.new(517.896729, 149.217636, 284.856842, 7.39097595e-06, -0.719539165, -0.694451928, -1, -7.39097595e-06, -3.01003456e-06, -3.01003456e-06, 0.694451928, -0.719539165),
-    Basic_Diving_Gear = CFrame.new(369.174774, 132.508835, 248.705368, 0.228398502, -0.158300221, -0.96061182, 1.58026814e-05, 0.986692965, -0.162594408, 0.973567724, 0.037121132, 0.225361705),
-    Fish_Radar = CFrame.new(365.75177, 134.50499, 274.105804, 0.704499543, -0.111681774, -0.70086211, 1.32396817e-05, 0.987542748, -0.157350808, 0.709704578, 0.110844307, 0.695724905)
-}
-
---<>----<>----<>----< Functions >----<>----<>----<>--
-PlayerGUI.ChildAdded:Connect(function(GUI)
-    if GUI:IsA("ScreenGui") then
-        if GUI.Name == "reel" and autoReel then
-            local reelfinishedEvent = ReplicatedStorage:WaitForChild("events"):WaitForChild("reelfinished")
-            if reelfinishedEvent then
-                while GUI do
-                    task.wait(2)
-                    reelfinishedEvent:FireServer(100, false)
-                end
-            end
-        end
-    end
-end)
-function AutoFish5()
-    if autoShake3 then
-        task.spawn(function()
-            while AutoFish do
-                local PlayerGUI = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
-                local shakeUI = PlayerGUI:FindFirstChild("shakeui")
-                if shakeUI and shakeUI.Enabled then
-                    local safezone = shakeUI:FindFirstChild("safezone")
-                    if safezone then
-                        local button = safezone:FindFirstChild("button")
-                        if button and button:IsA("ImageButton") and button.Visible then
-                            if autoShake then
-                                local pos = button.AbsolutePosition
-                                local size = button.AbsoluteSize
-                                VirtualInputManager:SendMouseButtonEvent(pos.X + size.X / 2, pos.Y + size.Y / 2, 0, true, game:GetService("Players").LocalPlayer, 0)
-                                VirtualInputManager:SendMouseButtonEvent(pos.X + size.X / 2, pos.Y + size.Y / 2, 0, false, game:GetService("Players").LocalPlayer, 0)
-                            elseif autoShake2 then
-                                GuiService.SelectedObject = button
-                                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
-                                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
-                            end
-                        end
-                    end
-                end
-                task.wait()
-            end
-        end)
-    else
-        task.spawn(function()
-            while AutoFish do
-                task.wait(autoShakeDelay)
-                local PlayerGUI = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
-                local shakeUI = PlayerGUI:FindFirstChild("shakeui")
-                if shakeUI and shakeUI.Enabled then
-                    local safezone = shakeUI:FindFirstChild("safezone")
-                    if safezone then
-                        local button = safezone:FindFirstChild("button")
-                        if button and button:IsA("ImageButton") and button.Visible then
-                            if autoShake then
-                                local pos = button.AbsolutePosition
-                                local size = button.AbsoluteSize
-                                VirtualInputManager:SendMouseButtonEvent(pos.X + size.X / 2, pos.Y + size.Y / 2, 0, true, game:GetService("Players").LocalPlayer, 0)
-                                VirtualInputManager:SendMouseButtonEvent(pos.X + size.X / 2, pos.Y + size.Y / 2, 0, false, game:GetService("Players").LocalPlayer, 0)
-                            elseif autoShake2 then
-                                GuiService.SelectedObject = button
-                                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
-                                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
-                            end
-                        end
-                    end
-                end
-            end
-        end)
-    end
-end
-function ZoneCasting()
-    if not ProtectPremium then
-        return
-    end
-    spawn(function()
-        while AutoZoneCast do
-            local player = game.Players.LocalPlayer
-            local character = player.Character
-            if character then
-                local tool = character:FindFirstChildOfClass("Tool")
-                if tool then
-                    local hasBobber = tool:FindFirstChild("bobber")
-                    if hasBobber then
-                        local ropeConstraint = hasBobber:FindFirstChild("RopeConstraint")
-                        if ropeConstraint then
-                            ropeConstraint.Length = 200000
-                        end
-
-                        local platformSize = Vector3.new(10, 1, 10)
-                        local platformPositionOffset = Vector3.new(0, -4, 0)
-
-                        -- Custom Zones
-                        if selectedZoneCast == "Bluefin Tuna Abundance" then
-                            local selectedZone = Workspace.zones.fishing:FindFirstChild("Deep Ocean")
-                            if selectedZone then
-                                local abundanceValue = selectedZone:FindFirstChild("Abundance")
-                                if abundanceValue and abundanceValue.Value == "Bluefin Tuna" then
-                                    local bobberPosition = CFrame.new(selectedZone.Position.X, 126.564, selectedZone.Position.Z)
-                                    hasBobber.CFrame = bobberPosition
-                                    
-                                    local platform = Instance.new("Part")
-                                    platform.Size = platformSize
-                                    platform.Position = hasBobber.Position + platformPositionOffset
-                                    platform.Anchored = true
-                                    platform.Parent = hasBobber
-                                    platform.BrickColor = BrickColor.new("Bright blue")
-                                    platform.Transparency = 1.000
-                                end
-                            end
-                        elseif selectedZoneCast == "Swordfish Abundance" then
-                            local selectedZone = Workspace.zones.fishing:FindFirstChild("Deep Ocean")
-                            if selectedZone then
-                                local abundanceValue = selectedZone:FindFirstChild("Abundance")
-                                if abundanceValue and abundanceValue.Value == "Swordfish" then
-                                    local bobberPosition = CFrame.new(selectedZone.Position.X, 126.564, selectedZone.Position.Z)
-                                    hasBobber.CFrame = bobberPosition
-                                    
-                                    local platform = Instance.new("Part")
-                                    platform.Size = platformSize
-                                    platform.Position = hasBobber.Position + platformPositionOffset
-                                    platform.Anchored = true
-                                    platform.Parent = hasBobber
-                                    platform.BrickColor = BrickColor.new("Bright blue")
-                                    platform.Transparency = 1.000
-                                end
-                            end
-                        else
-                            -- Default Zones
-                            local selectedZone = Workspace.zones.fishing:FindFirstChild(selectedZoneCast)
-                            if selectedZone then
-                                local bobberPosition
-                                if selectedZoneCast == "FischFright24" then
-                                    bobberPosition = CFrame.new(selectedZone.Position.X, 126, selectedZone.Position.Z)
-                                elseif selectedZoneCast == "Isonade" then
-                                    bobberPosition = CFrame.new(selectedZone.Position.X, 126, selectedZone.Position.Z)
-                                elseif selectedZoneCast == "Deep Ocean" then
-                                    bobberPosition = CFrame.new(1521, 126, -3543)
-                                elseif selectedZoneCast == "Desolate Deep" then
-                                    bobberPosition = CFrame.new(-1068, 126, -3108)
-                                elseif selectedZoneCast == "Harvesters Spike" then
-                                    bobberPosition = CFrame.new(-1234, 126, 1748)
-                                elseif selectedZoneCast == "Moosewood Docks" then
-                                    bobberPosition = CFrame.new(345, 126, 214)
-                                elseif selectedZoneCast == "Moosewood Ocean" then
-                                    bobberPosition = CFrame.new(890, 126, 465)
-                                elseif selectedZoneCast == "Moosewood Ocean Mythical" then
-                                    bobberPosition = CFrame.new(270, 126, 52)
-                                elseif selectedZoneCast == "Moosewood Pond" then
-                                    bobberPosition = CFrame.new(526, 126, 305)
-                                elseif selectedZoneCast == "Mushgrove Water" then
-                                    bobberPosition = CFrame.new(2541, 126, -792)
-                                elseif selectedZoneCast == "Ocean" then
-                                    bobberPosition = CFrame.new(-5712, 126, 4059)
-                                elseif selectedZoneCast == "Roslit Bay" then
-                                    bobberPosition = CFrame.new(-1650, 126, 504)
-                                elseif selectedZoneCast == "Roslit Bay Ocean" then
-                                    bobberPosition = CFrame.new(-1825, 126, 946)
-                                elseif selectedZoneCast == "Roslit Pond" then
-                                    bobberPosition = CFrame.new(-1807, 141, 599)
-                                elseif selectedZoneCast == "Roslit Pond Seaweed" then
-                                    bobberPosition = CFrame.new(-1804, 141, 625)
-                                elseif selectedZoneCast == "Scallop Ocean" then
-                                    bobberPosition = CFrame.new(16, 126, 730)
-                                elseif selectedZoneCast == "Snowcap Ocean" then
-                                    bobberPosition = CFrame.new(2308, 126, 2200)
-                                elseif selectedZoneCast == "Snowcap Pond" then
-                                    bobberPosition = CFrame.new(2777, 275, 2605)
-                                elseif selectedZoneCast == "Sunstone" then
-                                    bobberPosition = CFrame.new(-645, 126, -955)
-                                elseif selectedZoneCast == "Terrapin Ocean" then
-                                    bobberPosition = CFrame.new(-57, 126, 2011)
-                                elseif selectedZoneCast == "The Arch" then
-                                    bobberPosition = CFrame.new(1076, 126, -1202)
-                                elseif selectedZoneCast == "Vertigo" then
-                                    bobberPosition = CFrame.new(-75, -740, 1200)
-                                end
-
-                                hasBobber.CFrame = bobberPosition
-                                
-                                local platform = Instance.new("Part")
-                                platform.Size = platformSize
-                                platform.Position = hasBobber.Position + platformPositionOffset
-                                platform.Anchored = true
-                                platform.Parent = hasBobber
-                                platform.BrickColor = BrickColor.new("Bright blue")
-                                platform.Transparency = 1.000
-                            end
-                        end
-                    else
-                        print("Bobber not found in the tool.")
-                    end
-                else
-                    print("No tool found in the character.")
-                end
-            end
-            task.wait(0.01)
-        end
-    end)
+function Library:validate(default, options)
+	for i, v in pairs(default) do
+		if options[i] == nil then 
+			options[i] = v
+		end
+	end
+	return options
 end
 
-function AntiAfk2()
-    spawn(function()
-        while AntiAfk do
-            game:GetService("ReplicatedStorage"):WaitForChild("events"):WaitForChild("afk"):FireServer(false)
-            task.wait(0.01)
-        end
-    end)
-end           
-PlayerGUI.ChildAdded:Connect(function(GUI)
-    if GUI:IsA("ScreenGui") then
-    elseif GUI.Name == "reel" and autoReel then
-        local reelfinishedEvent = ReplicatedStorage:WaitForChild("events"):WaitForChild("reelfinished")
-        if reelfinishedEvent then
-            while GUI do
-                task.wait(2)
-                reelfinishedEvent:FireServer(100, false)
-            end
-        end
-    end
-end)
-function Pidoras()
-    spawn(function()
-        while AutoCast do
-            local player = game.Players.LocalPlayer
-            local character = player.Character
-
-            if character then
-                local tool = character:FindFirstChildOfClass("Tool")
-
-                if tool then
-                    local hasBobber = tool:FindFirstChild("bobber")
-
-                    if not hasBobber then
-                        local castEvent = tool:FindFirstChild("events") and tool.events:FindFirstChild("cast")
-
-                        if castEvent then
-                            local Random = math.random() * (99 - 90) + 90
-                            local FRandom = string.format("%.4f", Random)
-                            print(FRandom)
-                            
-                            local Random2 = math.random(90, 99)
-                            castEvent:FireServer(Random2)
-
-                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                            if humanoidRootPart then
-                                humanoidRootPart.Anchored = false
-                            end
-                        end
-                    end
-                end
-                task.wait(1)
-            end
-        end
-    end)
+function Library:tween(object, goal, callback)
+	local tween = tweenService:Create(object, tweenInfo, goal)
+	tween.Completed:Connect(callback or function() end)
+	tween:Play()
 end
-NoclipConnection = RunService.Stepped:Connect(function()
-    if Noclip == true then
-        if LocalCharacter ~= nil then
-            for i, v in pairs(LocalCharacter:GetDescendants()) do
-                if v:IsA("BasePart") and v.CanCollide == true then
-                    v.CanCollide = false
-                end
-            end
-        end
-    end
-end)
 
-local initialPosition
+function Library:new(options)
+	options = Library:validate({
+		
+		name = "Kaos Beta"
+		
+	}, options or {})
+	
+	local GUI = {
+		CurrentTab = nil
+	}
+	
+	-- Main Frame 
+	do
+		-- StarterGui.Kaos
+		GUI["1"] = Instance.new("ScreenGui", runService:IsStudio() and players.LocalPlayer:WaitForChild("PlayerGui") or coreGui);
+		GUI["1"]["Name"] = [[Kaos]];
+		GUI["1"]["IgnoreGuiInset"] = true
 
-function rememberPosition()
-    spawn(function()
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
-        local rootPart = character:WaitForChild("HumanoidRootPart")
+		-- StarterGui.Kaos.Main
+		GUI["2"] = Instance.new("ImageLabel", GUI["1"]);
+		GUI["2"]["BorderSizePixel"] = 0;
+		GUI["2"]["BackgroundColor3"] = Color3.fromRGB(3, 3, 3);
+		GUI["2"]["AnchorPoint"] = Vector2.new(0, 0);
+		GUI["2"]["Image"] = [[rbxassetid://17890000273]];
+		GUI["2"]["Size"] = UDim2.new(0, 650, 0, 400);
+		GUI["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["2"]["Name"] = [[Main]];
+		GUI["2"]["Position"] = UDim2.fromOffset((viewport.X/2) - (GUI["2"].Size.X.Offset /2), (viewport.Y/2) - (GUI["2"].Size.Y.Offset /2));
+
+		-- StarterGui.Kaos.Main.UICorner
+		GUI["3"] = Instance.new("UICorner", GUI["2"]);
+		GUI["3"]["CornerRadius"] = UDim.new(0, 3);
+
+		-- StarterGui.Kaos.Main.DropShadowHolder
+		GUI["4"] = Instance.new("Frame", GUI["2"]);
+		GUI["4"]["ZIndex"] = 0;
+		GUI["4"]["BorderSizePixel"] = 0;
+		GUI["4"]["Size"] = UDim2.new(1, 0, 1, 0);
+		GUI["4"]["Name"] = [[DropShadowHolder]];
+		GUI["4"]["BackgroundTransparency"] = 1;
+
+		-- StarterGui.Kaos.Main.DropShadowHolder.DropShadow
+		GUI["5"] = Instance.new("ImageLabel", GUI["4"]);
+		GUI["5"]["ZIndex"] = 0;
+		GUI["5"]["BorderSizePixel"] = 0;
+		GUI["5"]["SliceCenter"] = Rect.new(49, 49, 450, 450);
+		GUI["5"]["ScaleType"] = Enum.ScaleType.Slice;
+		GUI["5"]["ImageTransparency"] = 0.5;
+		GUI["5"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["5"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+		GUI["5"]["Image"] = [[rbxassetid://6014261993]];
+		GUI["5"]["Size"] = UDim2.new(1, 47, 1, 47);
+		GUI["5"]["BackgroundTransparency"] = 1;
+		GUI["5"]["Name"] = [[DropShadow]];
+		GUI["5"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+		
+		-- StarterGui.Kaos.Main.ContentContainer
+		GUI["1f"] = Instance.new("Frame", GUI["2"]);
+		GUI["1f"]["BorderSizePixel"] = 0;
+		GUI["1f"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+		GUI["1f"]["AnchorPoint"] = Vector2.new(1, 0);
+		GUI["1f"]["Size"] = UDim2.new(1, -115, 0.773, -42);
+		GUI["1f"]["Position"] = UDim2.new(1, -6, 0.03, 71);
+		GUI["1f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["1f"]["Name"] = [[ContentContainer]];
+		GUI["1f"]["BackgroundTransparency"] = 1;
+	end
+	
+	
+
+
+	-- TobBar Section
+	do
+		-- StarterGui.Kaos.Main.TopBar
+		GUI["6"] = Instance.new("Frame", GUI["2"]);
+		GUI["6"]["BorderSizePixel"] = 0;
+		GUI["6"]["BackgroundColor3"] = Color3.fromRGB(24, 0, 64);
+		GUI["6"]["Size"] = UDim2.new(1, 0, 0, 30);
+		GUI["6"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["6"]["Name"] = [[TopBar]];
+		GUI["6"]["BackgroundTransparency"] = 1;
+
+		-- StarterGui.Kaos.Main.TopBar.UICorner
+		GUI["7"] = Instance.new("UICorner", GUI["6"]);
+		GUI["7"]["CornerRadius"] = UDim.new(0, 3);
+
+		-- StarterGui.Kaos.Main.TopBar.Extension
+		GUI["8"] = Instance.new("Frame", GUI["6"]);
+		GUI["8"]["BorderSizePixel"] = 0;
+		GUI["8"]["BackgroundColor3"] = Color3.fromRGB(24, 0, 64);
+		GUI["8"]["AnchorPoint"] = Vector2.new(0, 1);
+		GUI["8"]["Size"] = UDim2.new(1, 0, 0.5, 0);
+		GUI["8"]["Position"] = UDim2.new(0, 0, 1, 0);
+		GUI["8"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["8"]["Name"] = [[Extension]];
+		GUI["8"]["BackgroundTransparency"] = 1;
+
+		-- StarterGui.Kaos.Main.TopBar.Exit
+		GUI["9"] = Instance.new("ImageLabel", GUI["6"]);
+		GUI["9"]["BorderSizePixel"] = 0;
+		GUI["9"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+		GUI["9"]["Image"] = [[http://www.roblox.com/asset/?id=6031094678]];
+		GUI["9"]["Size"] = UDim2.new(0, 22, 0, 22);
+		GUI["9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["9"]["BackgroundTransparency"] = 1;
+		GUI["9"]["Name"] = [[Exit]];
+		GUI["9"]["Position"] = UDim2.new(0.96, 0, 0, 4);
+
+
+	end
+	
+	
+	local UserInputService = game:GetService("UserInputService")
+	local TweenService = game:GetService("TweenService")
+
+	local imageLabel = GUI["2"]  
+
+	local dragFrame = Instance.new("Frame")
+	dragFrame.Size = UDim2.new(1, 0, 0, 50)  
+	dragFrame.Position = UDim2.new(0, 0, 0, 0) 
+	dragFrame.BackgroundTransparency = 1  
+	dragFrame.Parent = imageLabel 
+
+	local dragging = false
+	local dragInput
+	local dragStart
+	local startPos
+
+	local function update(input)
+		local delta = input.Position - dragStart
+		local newPosition = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		imageLabel.Position = newPosition
+	end
+
+	dragFrame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = imageLabel.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+
+	dragFrame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			update(input)
+		end
+	end)
+	
+	local MainFrameLabel = GUI["2"]
+	local ImageClose = GUI["9"]
+
+
+	local exitButton = Instance.new("TextButton")
+	exitButton.Name = "ExitButton"
+	exitButton.Size = UDim2.new(0, 22, 0, 22)  
+	exitButton.Position = UDim2.new(0.96, 0, 0, 4)  
+	exitButton.BackgroundTransparency = 1  
+	exitButton.Text = ""  
+	exitButton.Parent = GUI["6"]  
+
+
+
+	local function closeMainFrameLabel()
+		MainFrameLabel.Visible = false  
+	end
+
+	exitButton.MouseButton1Click:Connect(closeMainFrameLabel)
+
+	local isVisible = false
+
+	local function toggleVisibility()
+		isVisible = not isVisible
+		MainFrameLabel.Visible = isVisible
+	end
+
+	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		if input.KeyCode == Enum.KeyCode.LeftControl and not gameProcessedEvent then
+			toggleVisibility()
+		end
+	end)
+
+
+	
+	-- BottomBar Section 
+	do
+		-- StarterGui.Kaos.Main.BottomBar
+		GUI["b"] = Instance.new("Frame", GUI["2"]);
+		GUI["b"]["BorderSizePixel"] = 0;
+		GUI["b"]["BackgroundColor3"] = Color3.fromRGB(18, 0, 51);
+		GUI["b"]["Size"] = UDim2.new(1, 0, 0, 30);
+		GUI["b"]["Position"] = UDim2.new(0, 0, 0.92, 0);
+		GUI["b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["b"]["Name"] = [[BottomBar]];
+		GUI["b"]["BackgroundTransparency"] = 1;
+
+		-- StarterGui.Kaos.Main.BottomBar.UICorner
+		GUI["c"] = Instance.new("UICorner", GUI["b"]);
+		GUI["c"]["CornerRadius"] = UDim.new(0, 3);
+
+		-- StarterGui.Kaos.Main.BottomBar.Version
+		GUI["d"] = Instance.new("TextLabel", GUI["b"]);
+		GUI["d"]["BorderSizePixel"] = 0;
+		GUI["d"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+		GUI["d"]["TextSize"] = 12;
+		GUI["d"]["FontFace"] = Font.new([[rbxassetid://12187365977]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+		GUI["d"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+		GUI["d"]["BackgroundTransparency"] = 1;
+		GUI["d"]["Size"] = UDim2.new(0.16, 0, 1, 0);
+		GUI["d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["d"]["Text"] = [[Version 1.0.0]];
+		GUI["d"]["Name"] = [[Version]];
+
+		-- StarterGui.Kaos.Main.BottomBar.User
+		GUI["e"] = Instance.new("TextLabel", GUI["b"]);
+		GUI["e"]["TextWrapped"] = true;
+		GUI["e"]["BorderSizePixel"] = 0;
+		GUI["e"]["TextXAlignment"] = Enum.TextXAlignment.Right;
+		GUI["e"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+		GUI["e"]["TextScaled"] = true;
+		GUI["e"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+		GUI["e"]["TextSize"] = 14;
+		GUI["e"]["FontFace"] = Font.new([[rbxassetid://12187365977]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+		GUI["e"]["TextColor3"] = Color3.fromRGB(127, 127, 127);
+		GUI["e"]["BackgroundTransparency"] = 1;
+		GUI["e"]["Size"] = UDim2.new(0.14538, 0, 0.5, 0);
+		GUI["e"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["e"]["Text"] = [[@NaN]];
+		GUI["e"]["Name"] = [[User]];
+		GUI["e"]["Position"] = UDim2.new(0.845, 0, -0.1, 0);
+
+		-- StarterGui.Kaos.Main.BottomBar.User.getUser
+		GUI["f"] = Instance.new("LocalScript", GUI["e"]);
+		GUI["f"]["Name"] = [[getUser]];
+
+		-- StarterGui.Kaos.Main.BottomBar.Title
+		GUI["10"] = Instance.new("TextLabel", GUI["b"]);
+		GUI["10"]["BorderSizePixel"] = 0;
+		GUI["10"]["TextYAlignment"] = Enum.TextYAlignment.Bottom;
+		GUI["10"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+		GUI["10"]["TextSize"] = 14;
+		GUI["10"]["FontFace"] = Font.new([[rbxassetid://12187365977]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+		GUI["10"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+		GUI["10"]["BackgroundTransparency"] = 1;
+		GUI["10"]["Size"] = UDim2.new(0.16, 0, 1, 0);
+		GUI["10"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["10"]["Text"] = options["name"];
+		GUI["10"]["Name"] = [[Title]];
+		GUI["10"]["Position"] = UDim2.new(0, 0, -1, 0);
+		GUI["10"]["RichText"] = true
+		
+		local userLabel = GUI["e"]
+		local versionLabel = GUI["d"]
+
+		local function ChangeTxt()
+			if lp.DisplayName == lp.Name then
+				userLabel.Text = "Hidden" 
+			else 
+				userLabel.Text = lp.DisplayName
+			end
+		end
+	
+		
+		local function ChangeVersion()
+			versionLabel.Text = "1.0.0"
+			wait(1)
+		end
+
+		ChangeTxt()
+		ChangeVersion()
+
+	end
+	
+	-- Navigation
+	do
+		-- StarterGui.Kaos.Main.Navigation
+		GUI["12"] = Instance.new("Frame", GUI["2"]);
+		GUI["12"]["BorderSizePixel"] = 0;
+		GUI["12"]["BackgroundColor3"] = Color3.fromRGB(7, 7, 7);
+		GUI["12"]["Size"] = UDim2.new(0.004, 100, 1, -125);
+		GUI["12"]["Position"] = UDim2.new(0, 3, 0, 75);
+		GUI["12"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["12"]["Name"] = [[Navigation]];
+		GUI["12"]["BackgroundTransparency"] = 1;
+
+		-- StarterGui.Kaos.Main.Navigation.UICorner
+		GUI["13"] = Instance.new("UICorner", GUI["12"]);
+		GUI["13"]["CornerRadius"] = UDim.new(0, 3);
+
+		-- StarterGui.Kaos.Main.Navigation.Hide
+		GUI["14"] = Instance.new("Frame", GUI["12"]);
+		GUI["14"]["BorderSizePixel"] = 0;
+		GUI["14"]["BackgroundColor3"] = Color3.fromRGB(7, 7, 7);
+		GUI["14"]["Size"] = UDim2.new(1, 0, 0, 20);
+		GUI["14"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["14"]["Name"] = [[Hide]];
+		GUI["14"]["BackgroundTransparency"] = 1;
+
+		-- StarterGui.Kaos.Main.Navigation.Hide2
+		GUI["15"] = Instance.new("Frame", GUI["12"]);
+		GUI["15"]["BorderSizePixel"] = 0;
+		GUI["15"]["BackgroundColor3"] = Color3.fromRGB(7, 7, 7);
+		GUI["15"]["AnchorPoint"] = Vector2.new(1, 0);
+		GUI["15"]["Size"] = UDim2.new(0, 20, 1, 0);
+		GUI["15"]["Position"] = UDim2.new(1, 0, 0, 0);
+		GUI["15"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["15"]["Name"] = [[Hide2]];
+		GUI["15"]["BackgroundTransparency"] = 1;
+
+		-- StarterGui.Kaos.Main.Navigation.ButtonHolder
+		GUI["16"] = Instance.new("Frame", GUI["12"]);
+		GUI["16"]["BorderSizePixel"] = 0;
+		GUI["16"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+		GUI["16"]["Size"] = UDim2.new(1, 0, 1, 0);
+		GUI["16"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+		GUI["16"]["Name"] = [[ButtonHolder]];
+		GUI["16"]["BackgroundTransparency"] = 1;
+
+		-- StarterGui.Kaos.Main.Navigation.ButtonHolder.UIPadding
+		GUI["17"] = Instance.new("UIPadding", GUI["16"]);
+		GUI["17"]["PaddingTop"] = UDim.new(0, 8);
+		GUI["17"]["PaddingBottom"] = UDim.new(0, 8);
+
+		-- StarterGui.Kaos.Main.Navigation.ButtonHolder.UIListLayout
+		GUI["18"] = Instance.new("UIListLayout", GUI["16"]);
+		GUI["18"]["Padding"] = UDim.new(0, 1);
+		GUI["18"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+	end
+	
+	
+	
+	
+	function GUI:CreateTab(options)
+		options = Library:validate({
+
+			name = "Test Tab",
+			icon = "rbxassetid://17898619083"
+
+		}, options or {})
+	
+	
+	local Tab = {
+		Hover = false,
+		Active = false,
+		Elements = {}
+	}
+	
+	
+		-- Render
+		do
+			-- StarterGui.Kaos.Main.Navigation.ButtonHolder.InactiveTab
+			Tab["1c"] = Instance.new("TextLabel", GUI["16"]);
+			Tab["1c"]["BorderSizePixel"] = 0;
+			Tab["1c"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+			Tab["1c"]["BackgroundColor3"] = Color3.fromRGB(0, 252, 255);
+			Tab["1c"]["TextSize"] = 14;
+			Tab["1c"]["Font"] = Enum.Font.Arimo
+			Tab["1c"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arimo.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+			Tab["1c"]["TextColor3"] = Color3.fromRGB(154, 154, 154);
+			Tab["1c"]["BackgroundTransparency"] = 1;
+			Tab["1c"]["Size"] = UDim2.new(1, 0, 0, 25);
+			Tab["1c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+			Tab["1c"]["Text"] = options.name;
+			Tab["1c"]["Name"] = [[InactiveTab]];
+			Tab["1c"]["Position"] = UDim2.new(0, 0, 0.10039, 0);
+
+			-- StarterGui.Kaos.Main.Navigation.ButtonHolder.InactiveTab.UIPadding
+			Tab["1d"] = Instance.new("UIPadding", Tab["1c"]);
+			Tab["1d"]["PaddingLeft"] = UDim.new(0, 28);
+
+			-- StarterGui.Kaos.Main.Navigation.ButtonHolder.InactiveTab.Icon
+			Tab["1e"] = Instance.new("ImageLabel", Tab["1c"]);
+			Tab["1e"]["BorderSizePixel"] = 0;
+			Tab["1e"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+			Tab["1e"]["ImageColor3"] = Color3.fromRGB(154, 154, 154);
+			Tab["1e"]["AnchorPoint"] = Vector2.new(0, 0.5);
+			Tab["1e"]["Image"] = options.icon
+			Tab["1e"]["Size"] = UDim2.new(0, 18, 0, 18);
+			Tab["1e"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+			Tab["1e"]["BackgroundTransparency"] = 1;
+			Tab["1e"]["Name"] = [[Icon]];
+			Tab["1e"]["Position"] = UDim2.new(0, -24, 0.5, 0);
+			
+			-- StarterGui.Kaos.Main.ContentContainer.HomeTab
+			Tab["20"] = Instance.new("ScrollingFrame", GUI["1f"]);
+			Tab["20"]["BorderSizePixel"] = 0;
+			Tab["20"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+			Tab["20"]["Name"] = [[HomeTab]];
+			Tab["20"]["Selectable"] = false;
+			Tab["20"]["Size"] = UDim2.new(1, 0, 1, 0);
+			Tab["20"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+			Tab["20"]["ScrollBarThickness"] = 0;
+			Tab["20"]["BackgroundTransparency"] = 1;
+			Tab["20"]["SelectionGroup"] = false;
+			Tab["20"]["Visible"] = false;
+			
+			-- StarterGui.Kaos.Main.ContentContainer.HomeTab.UIPadding
+			Tab["21"] = Instance.new("UIPadding", Tab["20"]);
+			Tab["21"]["PaddingTop"] = UDim.new(0, 1);
+			Tab["21"]["PaddingRight"] = UDim.new(0, 1);
+			Tab["21"]["PaddingLeft"] = UDim.new(0, 15);
+			Tab["21"]["PaddingBottom"] = UDim.new(0, 1);
+
+			-- StarterGui.Kaos.Main.ContentContainer.HomeTab.UICorner
+			Tab["22"] = Instance.new("UICorner", Tab["20"]);
+			Tab["22"]["CornerRadius"] = UDim.new(0, 3);
+
+			-- StarterGui.Kaos.Main.ContentContainer.HomeTab.UIListLayout
+			Tab["23"] = Instance.new("UIListLayout", Tab["20"]);
+			Tab["23"]["Padding"] = UDim.new(0, 6);
+			Tab["23"]["SortOrder"] = Enum.SortOrder.LayoutOrder;
+		end
+	
+		-- Methods
+		function Tab:Activate()
+			if not Tab.Active then
+				if GUI.CurrentTab ~= nil then
+					GUI.CurrentTab:DeActivate()
+				end
+				
+				Tab.Active = true
+				Library:tween(Tab["1c"], {BackgroundTransparency = .8})
+				Library:tween(Tab["1c"], {TextColor3 = Color3.fromRGB(255, 255, 255)})
+				Library:tween(Tab["1e"], {ImageColor3 = Color3.fromRGB(255, 255, 255)})
+				Tab["20"].Visible = true
+				
+				GUI.CurrentTab = Tab
+			end
+		end
+		
+		function Tab:DeActivate()
+			if Tab.Active then 
+				Tab.Active = false
+				Tab.Hover = false
+				Library:tween(Tab["1c"], {TextColor3 = Color3.fromRGB(124, 124, 124)})
+				Library:tween(Tab["1e"], {ImageColor3 = Color3.fromRGB(124, 124, 124)})
+				Library:tween(Tab["1c"], {BackgroundTransparency = 1})
+				Tab["20"].Visible = false
+			end
+		end
+		
+		-- Section Functionality
+		function Tab:CreateSection(sectionName)
+			local SectionLabel = Instance.new("TextLabel", Tab["20"])
+			SectionLabel.BorderSizePixel = 0
+			SectionLabel.TextXAlignment = Enum.TextXAlignment.Left
+			SectionLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			SectionLabel.TextSize = 18
+			SectionLabel.Font = Enum.Font.Arial
+			SectionLabel.FontFace = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+			SectionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+			SectionLabel.BackgroundTransparency = 0.5
+			SectionLabel.Size = UDim2.new(1, 0, 0, 25)
+			SectionLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+			SectionLabel.Text = sectionName
+			SectionLabel.Name = sectionName .. "Section"
+			return SectionLabel
+		end
+		
+		-- Functions/Logic
+		
+		do
+			Tab["1c"].MouseEnter:Connect(function()
+				Tab.Hover = true 
+				if not Tab.Active then
+					Library:tween(Tab["1c"], {TextColor3 = Color3.fromRGB(195, 195, 195)})
+					Library:tween(Tab["1e"], {ImageColor3 = Color3.fromRGB(195, 195, 195)})
+				end
+			end)
+
+			Tab["1c"].MouseLeave:Connect(function()
+				Tab.Hover = false 
+				if not Tab.Active then
+					Library:tween(Tab["1c"], {TextColor3 = Color3.fromRGB(124, 124, 124)})
+					Library:tween(Tab["1e"], {ImageColor3 = Color3.fromRGB(124, 124, 124)})
+				end
+			end)
+
+			uis.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					if Tab.Hover then 
+						Tab:Activate()
+					end
+				end
+			end)
+
+			if GUI.CurrentTab == nil then
+				Tab:Activate()
+			end
+		end
+		
+		function Tab:Button(options)
+			options = Library:validate({
+				name = "Test Button",
+				callback = function() end
+
+			}, options or {})
+			
+			local Button = {
+				Hover = false, 
+				MouseDown = false
+			}
+			
+			-- Render 
+			do
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Button
+				Button["24"] = Instance.new("Frame", Tab["20"]);
+				Button["24"]["BorderSizePixel"] = 0;
+				Button["24"]["BackgroundColor3"] = Color3.fromRGB(0, 201, 201);
+				Button["24"]["Size"] = UDim2.new(0.972, 0, 0.01, 25);
+				Button["24"]["Position"] = UDim2.new(0.01163, 0, 0.2, 0);
+				Button["24"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Button["24"]["Name"] = [[Button]];
+				Button["24"]["BackgroundTransparency"] = 0.95;
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Button.Title
+				Button["25"] = Instance.new("TextLabel", Button["24"]);
+				Button["25"]["BorderSizePixel"] = 0;
+				Button["25"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+				Button["25"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+				Button["25"]["TextSize"] = 14;
+				Button["25"]["Font"] = Enum.Font.Arimo
+				Button["25"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arimo.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+				Button["25"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+				Button["25"]["BackgroundTransparency"] = 1;
+				Button["25"]["Size"] = UDim2.new(0.98782, -25, 1, 0);
+				Button["25"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Button["25"]["Text"] = options.name
+				Button["25"]["Name"] = [[Title]];
+				Button["25"]["Position"] = UDim2.new(0.01218, 0, 0, 0);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Button.UIPadding
+				Button["26"] = Instance.new("UIPadding", Button["24"]);
+				Button["26"]["PaddingTop"] = UDim.new(0, 6);
+				Button["26"]["PaddingRight"] = UDim.new(0, 6);
+				Button["26"]["PaddingLeft"] = UDim.new(0, 6);
+				Button["26"]["PaddingBottom"] = UDim.new(0, 6);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Button.Icon
+				Button["27"] = Instance.new("ImageLabel", Button["24"]);
+				Button["27"]["BorderSizePixel"] = 0;
+				Button["27"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+				Button["27"]["AnchorPoint"] = Vector2.new(1, 0);
+				Button["27"]["Image"] = [[rbxassetid://17898941161]];
+				Button["27"]["Size"] = UDim2.new(0, 25, 0, 25);
+				Button["27"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Button["27"]["BackgroundTransparency"] = 1;
+				Button["27"]["Name"] = [[Icon]];
+				Button["27"]["Position"] = UDim2.new(1, 0, -0.2, 0);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Button.UICorner
+				Button["28"] = Instance.new("UICorner", Button["24"]);
+				Button["28"]["CornerRadius"] = UDim.new(0, 3);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Button.UIStroke
+				Button["29"] = Instance.new("UIStroke", Button["24"]);
+				Button["29"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+				Button["29"]["Color"] = Color3.fromRGB(0, 54, 57);
+				
+				
+			end
+			
+			-- Methods
+			function Button:SetText(text)
+				Button["25"].Text = text
+				options.name = text
+			end
+			
+			function Button:SetCallBack(fn)
+				options.callback = fn
+			end
+			
+			-- Logic
+			do
+				Button["24"].MouseEnter:Connect(function()
+					Button.Hover = true
+					
+					Library:tween(Button["29"], {Color = Color3.fromRGB(0, 150, 158)})			
+				end)
+				
+				Button["24"].MouseLeave:Connect(function()
+					Button.Hover = false
+					
+					if not Button.MouseDown then
+						Library:tween(Button["29"], {Color = Color3.fromRGB(0, 54, 57)})
+					end
+				end)
+				
+				uis.InputBegan:Connect(function(input, gpe)
+					if gpe then return end
+					
+					if input.UserInputType == Enum.UserInputType.MouseButton1 and Button.Hover then 
+						Button.MouseDown = true
+						Library:tween(Button["24"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+						Library:tween(Button["24"], {BackgroundTransparency = 0.95})
+						Library:tween(Button["29"], {Color = Color3.fromRGB(0, 54, 57)})
+						
+						options.callback()
+					end
+				end)
+				
+				uis.InputEnded:Connect(function(input, gpe)
+					if gpe then return end
+
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+						Button.MouseDown = false
+						
+						if Button.Hover then
+							Library:tween(Button["24"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+							Library:tween(Button["29"], {Color = Color3.fromRGB(0, 150, 158)})	
+						else
+							Library:tween(Button["24"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+							Library:tween(Button["29"], {Color = Color3.fromRGB(0, 54, 57)})
+						end
+					end
+				end)
+			end
+			
+	
+			
+			return Button
+		end
+	
+		function Tab:Label(options)
+			options = Library:validate({
+
+				message = "Test Label"
+
+			}, options or {})
+			
+			local Label = {}
+			
+			
+			-- Render
+			do
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Label
+				Label["2a"] = Instance.new("Frame", Tab["20"]);
+				Label["2a"]["BorderSizePixel"] = 0;
+				Label["2a"]["BackgroundColor3"] = Color3.fromRGB(114, 114, 114);
+				Label["2a"]["Size"] = UDim2.new(0.972, 0, 0.01, 25);
+				Label["2a"]["Position"] = UDim2.new(0.01163, 0, 0.2, 0);
+				Label["2a"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Label["2a"]["Name"] = [[Label]];
+				Label["2a"]["BackgroundTransparency"] = 0.95;
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Label.Title
+				Label["2b"] = Instance.new("TextLabel", Label["2a"]);
+				Label["2b"]["BorderSizePixel"] = 0;
+				Label["2b"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+				Label["2b"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+				Label["2b"]["TextSize"] = 14;
+				Label["2b"]["Font"] = Enum.Font.Arimo
+				Label["2b"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arimo.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+				Label["2b"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+				Label["2b"]["BackgroundTransparency"] = 1;
+				Label["2b"]["Size"] = UDim2.new(0.98782, -25, 1, 0);
+				Label["2b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Label["2b"]["Name"] = [[Title]];
+				Label["2b"]["Text"] = options.message;
+				Label["2b"]["Position"] = UDim2.new(0.01218, 0, 0, 0);
+				Label["2b"]["TextWrapped"] = true;
+				Label["2b"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Label.UIPadding
+				Label["2c"] = Instance.new("UIPadding", Label["2a"]);
+				Label["2c"]["PaddingTop"] = UDim.new(0, 6);
+				Label["2c"]["PaddingRight"] = UDim.new(0, 6);
+				Label["2c"]["PaddingLeft"] = UDim.new(0, 6);
+				Label["2c"]["PaddingBottom"] = UDim.new(0, 6);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Label.UICorner
+				Label["2d"] = Instance.new("UICorner", Label["2a"]);
+				Label["2d"]["CornerRadius"] = UDim.new(0, 3);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Label.UIStroke
+				Label["2e"] = Instance.new("UIStroke", Label["2a"]);
+				Label["2e"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+				Label["2e"]["Color"] = Color3.fromRGB(44, 44, 44);
+			end
+			
+			
+			-- Methods
+			function Label:SetText(text)
+				options.message = text
+				Label:_update()
+				
+			end
+			
+			function Label:_update()
+				Label["2b"].Text = options.message
+				Label["2b"].Size = UDim2.new(Label["2b"].Size.X.Scale, Label["2b"].Size.X.Offset, 0, math.huge)
+				Label["2b"].Size = UDim2.new(Label["2b"].Size.X.Scale, Label["2b"].Size.X.Offset, 0, Label["2b"].TextBounds.Y)
+				
+				local newSize = UDim2.new(Label["2a"].Size.X.Scale, Label["2a"].Size.X.Offset, 0, Label["2b"].TextBounds.Y + 12)
+				Library:tween(Label["2a"], {Size = newSize})
+			end
+
+		
+			
+			Label:_update()
+			return Label
+		end
+	
+	function Tab:Toggle(options)
+			options = Library:validate({
+
+				title = "Test Toggle",
+				callback = function() end
+
+			}, options or {})
+			
+			local Toggle = {
+				Hover = false,
+				MouseDown = false,
+				State = false
+			}
+			
+			-- Render
+			do
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive
+				Toggle["4b"] = Instance.new("Frame", Tab["20"]);
+				Toggle["4b"]["BorderSizePixel"] = 0;
+				Toggle["4b"]["BackgroundColor3"] = Color3.fromRGB(0, 201, 201);
+				Toggle["4b"]["Size"] = UDim2.new(0.972, 0, 0.01, 25);
+				Toggle["4b"]["Position"] = UDim2.new(0.01163, 0, 0.2, 0);
+				Toggle["4b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Toggle["4b"]["Name"] = [[ToggleInactive]];
+				Toggle["4b"]["BackgroundTransparency"] = 0.95;
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.Title
+				Toggle["4c"] = Instance.new("TextLabel", Toggle["4b"]);
+				Toggle["4c"]["BorderSizePixel"] = 0;
+				Toggle["4c"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+				Toggle["4c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+				Toggle["4c"]["TextSize"] = 14;
+				Toggle["4c"]["Font"] = Enum.Font.Arimo
+				Toggle["4c"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arimo.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+				Toggle["4c"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+				Toggle["4c"]["BackgroundTransparency"] = 1;
+				Toggle["4c"]["Size"] = UDim2.new(0.988, -35, 1, 0);
+				Toggle["4c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Toggle["4c"]["Text"] = options.title;
+				Toggle["4c"]["Name"] = [[Title]];
+				Toggle["4c"]["Position"] = UDim2.new(0.01218, 0, 0, 0);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.UIPadding
+				Toggle["4d"] = Instance.new("UIPadding", Toggle["4b"]);
+				Toggle["4d"]["PaddingTop"] = UDim.new(0, 6);
+				Toggle["4d"]["PaddingRight"] = UDim.new(0, 6);
+				Toggle["4d"]["PaddingLeft"] = UDim.new(0, 6);
+				Toggle["4d"]["PaddingBottom"] = UDim.new(0, 6);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.UICorner
+				Toggle["4e"] = Instance.new("UICorner", Toggle["4b"]);
+				Toggle["4e"]["CornerRadius"] = UDim.new(0, 3);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.UIStroke
+				Toggle["4f"] = Instance.new("UIStroke", Toggle["4b"]);
+				Toggle["4f"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+				Toggle["4f"]["Color"] = Color3.fromRGB(0, 54, 57);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.CheckMarkHolder
+				Toggle["50"] = Instance.new("Frame", Toggle["4b"]);
+				Toggle["50"]["BorderSizePixel"] = 0;
+				Toggle["50"]["BackgroundColor3"] = Color3.fromRGB(49, 49, 49);
+				Toggle["50"]["AnchorPoint"] = Vector2.new(1, 0);
+				Toggle["50"]["Size"] = UDim2.new(0, 20, 0, 20);
+				Toggle["50"]["Position"] = UDim2.new(1, 0, 0, 0);
+				Toggle["50"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Toggle["50"]["Name"] = [[CheckMarkHolder]];
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.CheckMarkHolder.UICorner
+				Toggle["51"] = Instance.new("UICorner", Toggle["50"]);
+				Toggle["51"]["CornerRadius"] = UDim.new(0, 2);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.CheckMarkHolder.UIStroke
+				Toggle["52"] = Instance.new("UIStroke", Toggle["50"]);
+				Toggle["52"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+				Toggle["52"]["Color"] = Color3.fromRGB(82, 82, 82);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.CheckMarkHolder.Checkmark
+				Toggle["53"] = Instance.new("ImageLabel", Toggle["50"]);
+				Toggle["53"]["BorderSizePixel"] = 0;
+				Toggle["53"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+				Toggle["53"]["ImageTransparency"] = 1;
+				Toggle["53"]["ImageColor3"] = Color3.fromRGB(47, 255, 0);
+				Toggle["53"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+				Toggle["53"]["Image"] = [[rbxassetid://18107037810]];
+				Toggle["53"]["Size"] = UDim2.new(1, -2, 1, -2);
+				Toggle["53"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Toggle["53"]["BackgroundTransparency"] = 1;
+				Toggle["53"]["Name"] = [[Checkmark]];
+				Toggle["53"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+			end
+			
+			
+			-- Methods
+		
+			do
+				-- Methods
+				function Toggle:Toggle(b)
+					if b == nil then
+						Toggle.State = not Toggle.State
+					else
+						Toggle.State = b
+					end
+
+					if Toggle.State then
+						Library:tween(Toggle["50"], {BackgroundColor3 = Color3.fromRGB(49, 49, 49)})
+						Library:tween(Toggle["53"], {ImageTransparency = 0})
+					else
+						Library:tween(Toggle["50"], {BackgroundColor3 = Color3.fromRGB(49, 49, 49)})
+						Library:tween(Toggle["53"], {ImageTransparency = 1})
+					end
+					options.callback(Toggle.State)
+			end
+			
+			-- Logic
+			do
+				Toggle["4b"].MouseEnter:Connect(function()
+					Toggle.Hover = true
+
+					Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 150, 158)})			
+				end)
+
+				Toggle["4b"].MouseLeave:Connect(function()
+					Toggle.Hover = false
+
+					if not Toggle.MouseDown then
+						Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
+					end
+				end)
+
+				uis.InputBegan:Connect(function(input, gpe)
+					if gpe then return end
+
+					if input.UserInputType == Enum.UserInputType.MouseButton1 and Toggle.Hover then 
+						Toggle.MouseDown = true
+						Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+						Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
+						
+						Toggle:Toggle()
+					
+					end
+				end)
+
+				uis.InputEnded:Connect(function(input, gpe)
+					if gpe then return end
+
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+						Toggle.MouseDown = false
+
+						if Toggle.Hover then
+							Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+							Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 150, 158)})		
+						else
+							Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+							Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
+						end
+					end
+				end)
+			end
+			end
+			
+			
+			
+			return Toggle
+	end
+	
+	
+	function Tab:Slider(options)
+			options = Library:validate({
+				title = "Test Slider",
+				min = 0,
+				max = 100,
+				default = 50,
+				callback = function(v) print(v) end
+
+			}, options or {})
+			
+			local Slider = {
+				MouseDown = false,
+				Hover = false,
+				Connection = nil,
+				Options = options
+			}
+			
+			-- Render
+			do
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Slider
+				Slider["2f"] = Instance.new("Frame", Tab["20"]);
+				Slider["2f"]["BorderSizePixel"] = 0;
+				Slider["2f"]["BackgroundColor3"] = Color3.fromRGB(0, 201, 201);
+				Slider["2f"]["Size"] = UDim2.new(0.972, 0, 0.01, 40);
+				Slider["2f"]["Position"] = UDim2.new(0.01163, 0, 0.2, 0);
+				Slider["2f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Slider["2f"]["Name"] = [[Slider]];
+				Slider["2f"]["BackgroundTransparency"] = 0.95;
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Slider.Title
+				Slider["30"] = Instance.new("TextLabel", Slider["2f"]);
+				Slider["30"]["BorderSizePixel"] = 0;
+				Slider["30"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+				Slider["30"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+				Slider["30"]["TextSize"] = 14;
+				Slider["30"]["Font"] = Enum.Font.Arimo
+				Slider["30"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arimo.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+				Slider["30"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+				Slider["30"]["BackgroundTransparency"] = 1;
+				Slider["30"]["Size"] = UDim2.new(0.988, -24, 1, -10);
+				Slider["30"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Slider["30"]["Text"] = options.title
+				Slider["30"]["Name"] = [[Title]];
+				Slider["30"]["Position"] = UDim2.new(0.01218, 0, 0, 0);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Slider.UIPadding
+				Slider["31"] = Instance.new("UIPadding", Slider["2f"]);
+				Slider["31"]["PaddingTop"] = UDim.new(0, 6);
+				Slider["31"]["PaddingRight"] = UDim.new(0, 6);
+				Slider["31"]["PaddingLeft"] = UDim.new(0, 6);
+				Slider["31"]["PaddingBottom"] = UDim.new(0, 6);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Slider.UIStroke
+				Slider["32"] = Instance.new("UIStroke", Slider["2f"]);
+				Slider["32"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+				Slider["32"]["Color"] = Color3.fromRGB(0, 54, 57);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Slider.Value
+				Slider["33"] = Instance.new("TextLabel", Slider["2f"]);
+				Slider["33"]["BorderSizePixel"] = 0;
+				Slider["33"]["TextXAlignment"] = Enum.TextXAlignment.Right;
+				Slider["33"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+				Slider["33"]["TextSize"] = 14;
+				Slider["33"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+				Slider["33"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+				Slider["33"]["BackgroundTransparency"] = 1;
+				Slider["33"]["AnchorPoint"] = Vector2.new(1, 0);
+				Slider["33"]["Size"] = UDim2.new(0, 24, 0, 24);
+				Slider["33"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Slider["33"]["Text"] = tostring(options.default);
+				Slider["33"]["Name"] = [[Value]];
+				Slider["33"]["Position"] = UDim2.new(1, 0, 0, 0);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Slider.SliderBack
+				Slider["34"] = Instance.new("Frame", Slider["2f"]);
+				Slider["34"]["BorderSizePixel"] = 0;
+				Slider["34"]["BackgroundColor3"] = Color3.fromRGB(0, 9, 9);
+				Slider["34"]["AnchorPoint"] = Vector2.new(0, 1);
+				Slider["34"]["Size"] = UDim2.new(0.98782, 0, 0, 4);
+				Slider["34"]["Position"] = UDim2.new(0.01218, 0, 1, 0);
+				Slider["34"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Slider["34"]["Name"] = [[SliderBack]];
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Slider.SliderBack.UIStroke
+				Slider["35"] = Instance.new("UIStroke", Slider["34"]);
+				Slider["35"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+				Slider["35"]["Color"] = Color3.fromRGB(0, 27, 28);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Slider.SliderBack.Draggable
+				Slider["36"] = Instance.new("Frame", Slider["34"]);
+				Slider["36"]["BorderSizePixel"] = 0;
+				Slider["36"]["BackgroundColor3"] = Color3.fromRGB(0, 131, 131);
+				Slider["36"]["Size"] = UDim2.new(0.5, 0, 1, 0);
+				Slider["36"]["Position"] = UDim2.new(-0, 0, 0, 0);
+				Slider["36"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Slider["36"]["Name"] = [[Draggable]];
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Slider.SliderBack.Draggable.UICorner
+				Slider["37"] = Instance.new("UICorner", Slider["36"]);
+				Slider["37"]["CornerRadius"] = UDim.new(0, 3);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Slider.SliderBack.UICorner
+				Slider["38"] = Instance.new("UICorner", Slider["34"]);
+				Slider["38"]["CornerRadius"] = UDim.new(0, 3);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Slider.UICorner
+				Slider["39"] = Instance.new("UICorner", Slider["2f"]);
+				Slider["39"]["CornerRadius"] = UDim.new(0, 3);
+			end
+			
+			
+			
+			-- Methods
+			function Slider:SetValue(v)
+				if v == nil then
+					local percentage = math.clamp((mouse.X - Slider["34"].AbsolutePosition.X) / Slider["34"].AbsoluteSize.X, 0, 1)
+					local value = math.floor(((options.max - options.min) * percentage) + options.min)
+
+					Slider["33"].Text = tostring(value)
+					Slider["36"].Size = UDim2.fromScale(percentage, 1)
+				else
+					Slider["33"].Text = tostring(v)
+					Slider["36"].Size = UDim2.fromScale(((v - options.min) / (options.max - options.min)), 1)
+				end
+				options.callback(Slider:GetValue())
+			end
+
+			
+			function Slider:GetValue()
+				return tonumber(Slider["33"].Text)
+			end
+			
+			-- Logic
+			do
+				
+				Slider["2f"].MouseEnter:Connect(function()
+					Slider.Hover = true
+
+					Library:tween(Slider["35"], {Color = Color3.fromRGB(0, 27, 28)})		
+					Library:tween(Slider["36"], {BackgroundColor3 = Color3.fromRGB(0, 227, 227)})	
+				end)
+
+				Slider["2f"].MouseLeave:Connect(function()
+					Slider.Hover = false
+
+					if not Slider.MouseDown then
+						Library:tween(Slider["35"], {Color = Color3.fromRGB(0, 27, 28)})
+						Library:tween(Slider["36"], {BackgroundColor3 = Color3.fromRGB(0, 131, 131)})	
+					end
+				end)
+
+				uis.InputBegan:Connect(function(input, gpe)
+					if gpe then return end
+
+					if input.UserInputType == Enum.UserInputType.MouseButton1 and Slider.Hover then 
+						Slider.MouseDown = true
+						Library:tween(Slider["2f"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+						Library:tween(Slider["2f"], {BackgroundTransparency = 0.95})
+						Library:tween(Slider["35"], {Color = Color3.fromRGB(0, 27, 28)})
+						Library:tween(Slider["36"], {BackgroundColor3 = Color3.fromRGB(0, 227, 227)})	
+					if not Slider.Connection then
+						Slider.Connection = runService.RenderStepped:Connect(function()
+							Slider:SetValue()
+						end)
+					end
+					end
+				end)
+
+				uis.InputEnded:Connect(function(input, gpe)
+					if gpe then return end
+
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+						Slider.MouseDown = false
+
+						if Slider.Hover then
+							Library:tween(Slider["2f"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+							Library:tween(Slider["35"], {Color = Color3.fromRGB(0, 27, 28)})	
+							Library:tween(Slider["36"], {BackgroundColor3 = Color3.fromRGB(0, 131, 131)})	
+						else
+							Library:tween(Slider["2f"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+							Library:tween(Slider["35"], {Color = Color3.fromRGB(0, 27, 28)})
+							Library:tween(Slider["36"], {BackgroundColor3 = Color3.fromRGB(0, 131, 131)})	
+						end
+						
+						if Slider.Connection then Slider.Connection:Disconnect() end
+						Slider.Connection = nil
+					end
+				end)
+				
+			end
+			
+			return Slider 
+	end
+	
+		
+
+		
+	
+		function Tab:Dropdown(options)
+			options = Library:validate({
+				title = "Test Dropdown",
+				callback = function() end,
+				items = {}
+			}, options or {})
+
+			local Dropdown = {
+				Items = {
+				["id"] = {
+							"value"
+				}
+				},
+				Open = false,
+				MouseDown = false,
+				Hover = false,
+				HoveringItem = false
+			}
+
+			-- Render
+			do
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown
+				Dropdown["3a"] = Instance.new("Frame", Tab["20"])
+				Dropdown["3a"].BorderSizePixel = 0
+				Dropdown["3a"].BackgroundColor3 = Color3.fromRGB(0, 201, 201)
+				Dropdown["3a"].ClipsDescendants = true
+				Dropdown["3a"].Size = UDim2.new(0.972, 0, 0.01, 30)
+				Dropdown["3a"].Position = UDim2.new(0.01163, 0, 0.2, 0)
+				Dropdown["3a"].BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Dropdown["3a"].Name = [[Dropdown]]
+				Dropdown["3a"].BackgroundTransparency = 0.95
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.Title
+				Dropdown["3b"] = Instance.new("TextLabel", Dropdown["3a"])
+				Dropdown["3b"].BorderSizePixel = 0
+				Dropdown["3b"].TextXAlignment = Enum.TextXAlignment.Left
+				Dropdown["3b"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Dropdown["3b"].TextSize = 14
+				Dropdown["3b"]["Font"] = Enum.Font.Arimo
+				Dropdown["3b"].FontFace = Font.new([[rbxasset://fonts/families/Arimo.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
+				Dropdown["3b"].TextColor3 = Color3.fromRGB(255, 255, 255)
+				Dropdown["3b"].BackgroundTransparency = 1
+				Dropdown["3b"].Size = UDim2.new(0.988, -25, 0.343, 30)
+				Dropdown["3b"].BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Dropdown["3b"].Text = options.title
+				Dropdown["3b"].Name = [[Title]]
+				Dropdown["3b"].Position = UDim2.new(0.01218, 0, -0.25725, 0)
+				Dropdown["3b"]["TextWrapped"] = true;
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.UIPadding
+				Dropdown["3c"] = Instance.new("UIPadding", Dropdown["3a"])
+				Dropdown["3c"].PaddingTop = UDim.new(0, 6)
+				Dropdown["3c"].PaddingRight = UDim.new(0, 6)
+				Dropdown["3c"].PaddingLeft = UDim.new(0, 6)
+				Dropdown["3c"].PaddingBottom = UDim.new(0, 6)
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.Icon
+				Dropdown["3d"] = Instance.new("ImageLabel", Dropdown["3a"])
+				Dropdown["3d"].BorderSizePixel = 0
+				Dropdown["3d"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Dropdown["3d"].AnchorPoint = Vector2.new(1, 0)
+				Dropdown["3d"].Image = [[rbxassetid://17899588973]]
+				Dropdown["3d"].Size = UDim2.new(0, 20, 0, 20)
+				Dropdown["3d"].BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Dropdown["3d"].BackgroundTransparency = 1
+				Dropdown["3d"].Name = [[Icon]]
+				Dropdown["3d"].Position = UDim2.new(1, 0, -0.03628, 0)
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.UICorner
+				Dropdown["3e"] = Instance.new("UICorner", Dropdown["3a"])
+				Dropdown["3e"].CornerRadius = UDim.new(0, 3)
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.UIStroke
+				Dropdown["3f"] = Instance.new("UIStroke", Dropdown["3a"])
+				Dropdown["3f"].ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+				Dropdown["3f"].Color = Color3.fromRGB(0, 54, 57)
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.OptionHolder
+				Dropdown["40"] = Instance.new("Frame", Dropdown["3a"])
+				Dropdown["40"].Visible = false
+				Dropdown["40"].BorderSizePixel = 0
+				Dropdown["40"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Dropdown["40"].Size = UDim2.new(1, 0, 1, -24)
+				Dropdown["40"].Position = UDim2.new(0, 0, 0, 26)
+				Dropdown["40"].BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Dropdown["40"].Name = [[OptionHolder]]
+				Dropdown["40"].BackgroundTransparency = 1
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.OptionHolder.UIListLayout
+				Dropdown["41"] = Instance.new("UIListLayout", Dropdown["40"])
+				Dropdown["41"].Padding = UDim.new(0, 4)
+				Dropdown["41"].SortOrder = Enum.SortOrder.LayoutOrder
+			end
+
+			-- Methods 
+			function Dropdown:Add(id, value)
+				local item = {
+					Hover = false,
+					MouseDown = false
+					
+				}
+				if Dropdown.Items[id] ~= nil then
+					return
+				end
+				Dropdown.Items[id] = {
+					instance = {},
+					value = value
+				}
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.OptionHolder.Inactive Option
+				Dropdown.Items[id].instance["42"] = Instance.new("TextLabel", Dropdown["40"])
+				Dropdown.Items[id].instance["42"].BorderSizePixel = 0
+				Dropdown.Items[id].instance["42"].BackgroundColor3 = Color3.fromRGB(14, 14, 14)
+				Dropdown.Items[id].instance["42"].TextSize = 12
+				Dropdown.Items[id].instance["42"].Font = Enum.Font.Arimo
+				Dropdown.Items[id].instance["42"].FontFace = Font.new([[rbxasset://fonts/families/Arimo.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+				Dropdown.Items[id].instance["42"].TextColor3 = Color3.fromRGB(192, 192, 192)
+				Dropdown.Items[id].instance["42"].Size = UDim2.new(1, 0, 0, 20)
+				Dropdown.Items[id].instance["42"].BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Dropdown.Items[id].instance["42"].Text = id
+				Dropdown.Items[id].instance["42"].Name = [[Inactive Option]]
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.OptionHolder.Inactive Option.UIStroke
+				Dropdown.Items[id].instance["43"] = Instance.new("UIStroke", Dropdown.Items[id].instance["42"])
+				Dropdown.Items[id].instance["43"].ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+				Dropdown.Items[id].instance["43"].Color = Color3.fromRGB(0, 34, 34)
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.OptionHolder.Inactive Option.UICorner
+				Dropdown.Items[id].instance["44"] = Instance.new("UICorner", Dropdown.Items[id].instance["42"])
+				Dropdown.Items[id].instance["44"].CornerRadius = UDim.new(0, 2)
+				
+				Dropdown.Items[id].instance["42"].MouseEnter:Connect(function()
+					item.Hover = true
+					Dropdown.HoveringItem = true
+					Library:tween(Dropdown.Items[id].instance["43"], {Color = Color3.fromRGB(0, 150, 158)})            
+				end)
+
+				Dropdown.Items[id].instance["42"].MouseLeave:Connect(function()
+					item.Hover = false
+					Dropdown.HoveringItem = false
+					if not item.MouseDown then
+						Library:tween(Dropdown.Items[id].instance["43"], {Color = Color3.fromRGB(0, 54, 57)})
+					end
+				end)
+
+				uis.InputBegan:Connect(function(input, gpe)
+					if gpe then return end
+					
+				
+					if input.UserInputType == Enum.UserInputType.MouseButton1 and item.Hover then 
+						item.MouseDown = true
+						Library:tween(Dropdown.Items[id].instance["42"], {BackgroundColor3 = Color3.fromRGB(14, 14, 14)})
+						Library:tween(Dropdown.Items[id].instance["43"], {Color = Color3.fromRGB(0, 150, 158)})
+
+
+						options.callback(value)
+						Dropdown:toggle()
+					end
+				end)
+
+				uis.InputEnded:Connect(function(input, gpe)
+					if gpe then return end
+					
+					if Dropdown.Items[id] == nil then return end
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+						item.MouseDown = false
+						if item.Hover then
+							Library:tween(Dropdown.Items[id].instance["42"], {BackgroundColor3 = Color3.fromRGB(14, 14, 14)})
+							Library:tween(Dropdown.Items[id].instance["43"], {Color = Color3.fromRGB(0, 150, 158)})    
+						else
+							Library:tween(Dropdown.Items[id].instance["42"], {BackgroundColor3 = Color3.fromRGB(14, 14, 14)})
+							Library:tween(Dropdown.Items[id].instance["43"], {Color = Color3.fromRGB(0, 54, 57)})
+						end
+					end
+				end)
+			end
+
+			function Dropdown:Remove(id)
+				if Dropdown.Items[id] ~= nil then
+					if Dropdown.Items[id].instance ~= nil then
+					for _, v in pairs(Dropdown.Items[id].instance) do
+						v:Destroy()
+					end
+					end
+					Dropdown.Items[id] = nil
+				end
+			end
+
+			function Dropdown:Clear()
+				for id, _ in pairs(Dropdown.Items) do 
+					Dropdown:Remove(id)
+				end
+			end
+
+			function Dropdown:toggle()
+				if Dropdown.Open then
+					Library:tween(Dropdown["3a"], {Size = UDim2.new(0.972, 0, 0, 35)}, function()
+						Dropdown["40"].Visible = false
+					end)
+				else
+					local count = 0
+					for _, v in pairs(Dropdown.Items) do
+						if v ~= nil then
+							count += 1
+						end
+					end
+
+					Dropdown["40"].Visible = true
+					Library:tween(Dropdown["3a"], {Size = UDim2.new(0.972, 0, 0, 30 + (count * 24) + 1)})
+				end
+				Dropdown.Open = not Dropdown.Open
+			end
+
+			-- Logic
+			do
+				Dropdown["3a"].MouseEnter:Connect(function()
+					Dropdown.Hover = true
+					Library:tween(Dropdown["3f"], {Color = Color3.fromRGB(0, 150, 158)})            
+				end)
+
+				Dropdown["3a"].MouseLeave:Connect(function()
+					Dropdown.Hover = false
+					if not Dropdown.MouseDown then
+						Library:tween(Dropdown["3f"], {Color = Color3.fromRGB(0, 54, 57)})
+					end
+				end)
+
+				uis.InputBegan:Connect(function(input, gpe)
+					if gpe then return end
+					if input.UserInputType == Enum.UserInputType.MouseButton1 and Dropdown.Hover then 
+						Dropdown.MouseDown = true
+						Library:tween(Dropdown["3a"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+						Library:tween(Dropdown["3f"], {Color = Color3.fromRGB(0, 150, 158)})
+						
+						if not Dropdown.HoveringItem then
+							Dropdown:toggle()
+						end
+						
+					end
+				end)
+
+				uis.InputEnded:Connect(function(input, gpe)
+					if gpe then return end
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+						Dropdown.MouseDown = false
+						if Dropdown.Hover then
+							Library:tween(Dropdown["3a"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+							Library:tween(Dropdown["3f"], {Color = Color3.fromRGB(0, 150, 158)})    
+						else
+							Library:tween(Dropdown["3a"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+							Library:tween(Dropdown["3f"], {Color = Color3.fromRGB(0, 54, 57)})
+						end
+					end
+				end)
+		
+				
+			end
+		
+			
+		
+	
+	
+
+
+
+			return Dropdown
+		end
+		
+		function Tab:CreateKeybind(options)
+			options = Library:validate({
+				name = "Test Keybind",
+				callback = function() end,
+				defaultKey = Enum.KeyCode.J
+			}, options or {})
+
+			local Keybind = {
+				CurrentKey = options.defaultKey,
+				Hover = false 
+			}
+
+			-- Render 
+			-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Keybind
+			Keybind["5d"] = Instance.new("Frame", Tab["20"])
+			Keybind["5d"]["BorderSizePixel"] = 0
+			Keybind["5d"]["BackgroundColor3"] = Color3.fromRGB(0, 201, 201)
+			Keybind["5d"]["Size"] = UDim2.new(0.972, 0, 0.01, 25)
+			Keybind["5d"]["Position"] = UDim2.new(0.01163, 0, 0.2, 0)
+			Keybind["5d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+			Keybind["5d"]["Name"] = [[Keybind]]
+			Keybind["5d"]["BackgroundTransparency"] = 0.95
+
+			-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Keybind.Title
+			Keybind["5e"] = Instance.new("TextLabel", Keybind["5d"])
+			Keybind["5e"]["BorderSizePixel"] = 0
+			Keybind["5e"]["TextXAlignment"] = Enum.TextXAlignment.Left
+			Keybind["5e"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+			Keybind["5e"]["TextSize"] = 14
+			Keybind["5e"]["Font"] = Enum.Font.Arimo
+			Keybind["5e"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arimo.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
+			Keybind["5e"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
+			Keybind["5e"]["BackgroundTransparency"] = 1
+			Keybind["5e"]["Size"] = UDim2.new(0.988, -150, 1, 0)
+			Keybind["5e"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+			Keybind["5e"]["Text"] = options.name
+			Keybind["5e"]["Name"] = [[Title]]
+			Keybind["5e"]["Position"] = UDim2.new(0.01218, 0, 0, 0)
+
+			-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Keybind.UIPadding
+			Keybind["5f"] = Instance.new("UIPadding", Keybind["5d"])
+			Keybind["5f"]["PaddingTop"] = UDim.new(0, 6)
+			Keybind["5f"]["PaddingRight"] = UDim.new(0, 6)
+			Keybind["5f"]["PaddingLeft"] = UDim.new(0, 6)
+			Keybind["5f"]["PaddingBottom"] = UDim.new(0, 6)
+
+			-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Keybind.UICorner
+			Keybind["60"] = Instance.new("UICorner", Keybind["5d"])
+			Keybind["60"]["CornerRadius"] = UDim.new(0, 3)
+
+			-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Keybind.UIStroke
+			Keybind["61"] = Instance.new("UIStroke", Keybind["5d"])
+			Keybind["61"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
+			Keybind["61"]["Color"] = Color3.fromRGB(0, 54, 57)
+
+			-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Keybind.TextBox
+			Keybind["62"] = Instance.new("TextBox", Keybind["5d"])
+			Keybind["62"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
+			Keybind["62"]["BorderSizePixel"] = 0
+			Keybind["62"]["TextSize"] = 14
+			Keybind["62"]["BackgroundColor3"] = Color3.fromRGB(49, 49, 49)
+			Keybind["62"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+			Keybind["62"]["AnchorPoint"] = Vector2.new(1, 0)
+			Keybind["62"]["Size"] = UDim2.new(0, 130, 1, 0)
+			Keybind["62"]["Position"] = UDim2.new(1, 0, 0, 0)
+			Keybind["62"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+			Keybind["62"]["Text"] = tostring(Keybind.CurrentKey):match("Enum.KeyCode.(%w+)")
+			Keybind["62"]["Name"] = [[TextBox]]
+
+			-- Functions
+			local keybindConnection
+
+			local function UpdateKeybind(input)
+				Keybind.CurrentKey = input.KeyCode
+				Keybind["62"].Text = tostring(Keybind.CurrentKey):match("Enum.KeyCode.(%w+)")
+			end
+
+			local function onKeyInput(input)
+				if input.UserInputType == Enum.UserInputType.Keyboard then
+					UpdateKeybind(input)
+					Keybind["62"]:ReleaseFocus()
+					keybindConnection:Disconnect()
+
+					-- Execute callback function
+					options.callback(Keybind.CurrentKey)
+				end
+			end
+
+			Keybind["62"].Focused:Connect(function()
+				Keybind["62"].Text = "Press a key"
+				keybindConnection = uis.InputBegan:Connect(onKeyInput)
+			end)
+
+			Keybind["62"].FocusLost:Connect(function(enterPressed)
+				if not enterPressed then
+					Keybind["62"].Text = tostring(Keybind.CurrentKey):match("Enum.KeyCode.(%w+)")
+				end
+			end)
+
+			uis.InputBegan:Connect(function(input)
+				if not Keybind["62"].IsFocused and input.KeyCode == Keybind.CurrentKey then
+					options.callback(Keybind.CurrentKey)
+				end
+			end)
+			
+			Keybind["5d"].MouseEnter:Connect(function()
+				Keybind.Hover = true
+
+				Library:tween(Keybind["61"], {Color = Color3.fromRGB(0, 150, 158)})			
+			end)
+
+			Keybind["5d"].MouseLeave:Connect(function()
+				Keybind.Hover = false
+
+				if not Keybind.MouseDown then
+					Library:tween(Keybind["61"], {Color = Color3.fromRGB(0, 54, 57)})
+				end
+			end)
+
+			uis.InputBegan:Connect(function(input, gpe)
+				if gpe then return end
+
+				if input.UserInputType == Enum.UserInputType.MouseButton1 and Keybind.Hover then 
+					Keybind.MouseDown = true
+					Library:tween(Keybind["5d"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+					Library:tween(Keybind["61"], {Color = Color3.fromRGB(0, 54, 57)})
+
+					options.callback()
+				end
+			end)
+
+			uis.InputEnded:Connect(function(input, gpe)
+				if gpe then return end
+
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+					Keybind.MouseDown = false
+
+					if Keybind.Hover then
+						Library:tween(Keybind["5d"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+						Library:tween(Keybind["61"], {Color = Color3.fromRGB(0, 150, 158)})	
+					else
+						Library:tween(Keybind["5d"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+						Library:tween(Keybind["61"], {Color = Color3.fromRGB(0, 54, 57)})
+					end
+				end
+			end)
+
+			return Keybind 
+		end
+
+		function Tab:CreateCustom(options)
+			options = Library:validate({
+				name = "Test Custom Image",
+				defaultImageId = "rbxassetid://18107528882",
+				defaultText = [["When nothing is in nothing what's in nothing?" - Samir]]
+			}, options or {})
+
+			local Custom = {
+				Hover = false,
+				Text = options.defaultText,
+				ImageId = options.defaultImageId
+			}
+
+			-- Render
+			do
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ImageButton
+				Custom.Frame = Instance.new("Frame", Tab["20"])
+				Custom.Frame.BorderSizePixel = 0
+				Custom.Frame.BackgroundColor3 = Color3.fromRGB(0, 201, 201)
+				Custom.Frame.Size = UDim2.new(0.972, 0, 0.01, 60)
+				Custom.Frame.Position = UDim2.new(0.01163, 0, 0.2, 0)
+				Custom.Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Custom.Frame.Name = "ImageButton"
+				Custom.Frame.BackgroundTransparency = 0.95
+
+				-- Title
+				Custom.Title = Instance.new("TextLabel", Custom.Frame)
+				Custom.Title.BorderSizePixel = 0
+				Custom.Title.TextXAlignment = Enum.TextXAlignment.Left
+				Custom.Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Custom.Title.TextSize = 14
+				Custom.Title.Font = Enum.Font.ArimoBold
+				Custom.Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+				Custom.Title.BackgroundTransparency = 1
+				Custom.Title.Size = UDim2.new(0.40707, -25, 0.4374, 0)
+				Custom.Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Custom.Title.Text = options.name
+				Custom.Title.Name = "Title"
+				Custom.Title.Position = UDim2.new(0.01218, 0, 0, 0)
+
+				-- UIPadding
+				local padding = Instance.new("UIPadding", Custom.Frame)
+				padding.PaddingTop = UDim.new(0, 6)
+				padding.PaddingRight = UDim.new(0, 6)
+				padding.PaddingLeft = UDim.new(0, 6)
+				padding.PaddingBottom = UDim.new(0, 6)
+
+				-- UICorner
+				local corner = Instance.new("UICorner", Custom.Frame)
+				corner.CornerRadius = UDim.new(0, 3)
+
+				-- UIStroke
+				local stroke = Instance.new("UIStroke", Custom.Frame)
+				stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+				stroke.Color = Color3.fromRGB(0, 54, 57)
+
+				-- ImageCustomID
+				Custom.Image = Instance.new("ImageLabel", Custom.Frame)
+				Custom.Image.BorderSizePixel = 0
+				Custom.Image.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Custom.Image.AnchorPoint = Vector2.new(1, 0)
+				Custom.Image.Image = Custom.ImageId
+				Custom.Image.Size = UDim2.new(0, 100, 0, 58)
+				Custom.Image.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Custom.Image.BackgroundTransparency = 1
+				Custom.Image.Name = "ImageCustomID"
+				Custom.Image.Position = UDim2.new(0.60153, 0, -0.05626, 0)
+
+				-- UICorner for Image
+				local imageCorner = Instance.new("UICorner", Custom.Image)
+				imageCorner.CornerRadius = UDim.new(0, 10)
+
+				-- UIStroke for Image
+				local imageStroke = Instance.new("UIStroke", Custom.Image)
+				imageStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+				imageStroke.Color = Color3.fromRGB(255, 255, 255)
+
+				-- CustomText
+				Custom.TextLabel = Instance.new("TextLabel", Custom.Frame)
+				Custom.TextLabel.TextWrapped = true
+				Custom.TextLabel.BorderSizePixel = 0
+				Custom.TextLabel.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+				Custom.TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+				Custom.TextLabel.TextYAlignment = Enum.TextYAlignment.Top
+				Custom.TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Custom.TextLabel.TextSize = 14
+				Custom.TextLabel.Font = Enum.Font.Arimo
+				Custom.TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+				Custom.TextLabel.BackgroundTransparency = 1
+				Custom.TextLabel.Size = UDim2.new(0.37255, 0, 1, 0)
+				Custom.TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Custom.TextLabel.Text = Custom.Text
+				Custom.TextLabel.Name = "CustomText"
+				Custom.TextLabel.Position = UDim2.new(0.62745, 0, 0, 0)
+			end
+
+			-- Functionality
+			function Custom:SetText(newText)
+				Custom.Text = newText or ""
+				Custom.TextLabel.Text = Custom.Text
+			end
+
+			function Custom:SetImageId(newImageId)
+				Custom.ImageId = newImageId or ""
+				Custom.Image.Image = Custom.ImageId
+			end
+
+		
+
+			return Custom
+		end
+
+		
+		
+
+		local Search = {}
+
+		-- Render 
+		do
+			-- StarterGui.Kaos.Main.Search
+			Search["83"] = Instance.new("TextBox", GUI["2"])
+			Search["83"]["Active"] = false
+			Search["83"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
+			Search["83"]["BorderSizePixel"] = 0
+			Search["83"]["Name"] = [[Search]]
+			Search["83"]["BackgroundColor3"] = Color3.fromRGB(60, 60, 60)
+			Search["83"]["Selectable"] = false
+			Search["83"]["Size"] = UDim2.new(0.25457, 0, 0.0475, 0)
+			Search["83"]["Position"] = UDim2.new(0.71231, 0, 0.115, 0)
+			Search["83"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
+			Search["83"]["Text"] = [[]]
+			Search["83"]["BackgroundTransparency"] = 0.85
+
+			-- StarterGui.Kaos.Main.Search.UICorner
+			Search["84"] = Instance.new("UICorner", Search["83"])
+			Search["84"]["CornerRadius"] = UDim.new(0, 5)
+
+			-- StarterGui.Kaos.Main.Search.UIStroke
+			Search["85"] = Instance.new("UIStroke", Search["83"])
+			Search["85"]["Color"] = Color3.fromRGB(21, 21, 21)
+		end
+
+		print("trying to run function")
+
+		local SearchBar = Search["83"]
+
+		local function UpdateElements()
+			if not GUI.CurrentTab then return end
+			local items = GUI.CurrentTab["20"]
+			local search = string.lower(SearchBar.Text)
+			for i, v in pairs(items:GetDescendants()) do
+				if not v:IsA("TextLabel") then continue end
+
+				local pFrame = v.Parent
+				local contents = string.lower(v.Text)
+				local containing = contents:match(search)
+
+				pFrame.Visible = containing ~= nil
+			end
+		end
+
+		SearchBar:GetPropertyChangedSignal("Text"):Connect(UpdateElements)
+
+		-- Define a function to create a notification
+		local function CreateNotification(parentFrame, text, imageId, duration)
+			-- Validate inputs and set defaults
+			parentFrame = parentFrame or game:GetService("StarterGui").ScreenGui.Frame
+			text = text or "Notification Text"
+			imageId = imageId or "rbxassetid://18107522271"
+			duration = duration or 3 -- Default duration in seconds
+
+			-- Create notification elements
+			local Notification = {}
+
+			Notification.Frame = Instance.new("Frame")
+			Notification.Frame.Parent = GUI["2"]
+			Notification.Frame.BorderSizePixel = 0
+			Notification.Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			Notification.Frame.Size = UDim2.new(0, 281, 0, 57)
+			Notification.Frame.Position = UDim2.new(1, 0, 1, 0) -- Start off-screen
+			Notification.Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+
+			-- ImageLabel
+			Notification.ImageLabel = Instance.new("ImageLabel")
+			Notification.ImageLabel.Parent = Notification.Frame
+			Notification.ImageLabel.BorderSizePixel = 0
+			Notification.ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			Notification.ImageLabel.Image = imageId
+			Notification.ImageLabel.Size = UDim2.new(0, 63, 0, 55)
+			Notification.ImageLabel.Position = UDim2.new(0, 5, 0, 1) -- Slightly offset
+			Notification.ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+			Notification.ImageLabel.BackgroundTransparency = 1
+
+			-- UICorner for ImageLabel
+			local imageCorner = Instance.new("UICorner")
+			imageCorner.Parent = Notification.ImageLabel
+			imageCorner.CornerRadius = UDim.new(0, 100)
+
+			-- TextLabel
+			Notification.TextLabel = Instance.new("TextLabel")
+			Notification.TextLabel.Parent = Notification.Frame
+			Notification.TextLabel.TextWrapped = true
+			Notification.TextLabel.BorderSizePixel = 0
+			Notification.TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			Notification.TextLabel.TextSize = 14
+			Notification.TextLabel.Font = Enum.Font.Arial
+			Notification.TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+			Notification.TextLabel.BackgroundTransparency = 1
+			Notification.TextLabel.Size = UDim2.new(0, 209, 0, 55)
+			Notification.TextLabel.Position = UDim2.new(0.15, 0, 0, 0) -- Slightly offset
+			Notification.TextLabel.Text = text
+
+			-- UIStroke
+			local stroke = Instance.new("UIStroke")
+			stroke.Parent = Notification.Frame
+			stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+			stroke.Color = Color3.fromRGB(0, 130, 130)
+
+			-- UICorner for Frame
+			local frameCorner = Instance.new("UICorner")
+			frameCorner.Parent = Notification.Frame
+			frameCorner.CornerRadius = UDim.new(0, 4)
+
+			-- UIGradient
+			local gradient = Instance.new("UIGradient")
+			gradient.Parent = Notification.Frame
+			gradient.Rotation = 90
+			gradient.Color = ColorSequence.new{
+				ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 12, 12)),
+				ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 36, 36))
+			}
+
+			-- Tween the notification into view
+			local endPosition = UDim2.new(1, -300, 1, 0) -- Slide from bottom right
+			local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+			game:GetService("TweenService"):Create(Notification.Frame, tweenInfo, {Position = UDim2.new(1, -300, 1, -60)}):Play()
+
+			-- Function to dismiss the notification
+			function Notification:Dismiss()
+				Notification.Frame:Destroy()
+			end
+
+			-- Auto-dismiss after duration
+			spawn(function()
+				wait(duration)
+				Notification:Dismiss()
+			end)
+
+			return Notification
+		end
  
-        local initialCFrame = rootPart.CFrame
- 
-        local bodyVelocity = Instance.new("BodyVelocity")
-        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-        bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-        bodyVelocity.Parent = rootPart
- 
-        local bodyGyro = Instance.new("BodyGyro")
-        bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-        bodyGyro.D = 100
-        bodyGyro.P = 10000
-        bodyGyro.CFrame = initialCFrame
-        bodyGyro.Parent = rootPart
- 
-        while AutoFreeze do
-            rootPart.CFrame = initialCFrame
-            task.wait(0.01)
-        end
- 
-        if bodyVelocity then
-            bodyVelocity:Destroy()
-        end
-        if bodyGyro then
-            bodyGyro:Destroy()
-        end
-    end)
+
+	return Tab
+	end 
+	
+
+	return GUI
 end
 
-function WebhookManager()
-    spawn(function()
-        while WebhookLog do
-            task.wait(WebhookDelay)
-            local OSTime = os.time()
-            local playerLocalTime = os.date('*t', OSTime)
-            local formattedLocalTime = string.format('%02d:%02d:%02d',
-                                             playerLocalTime.hour,
-                                             playerLocalTime.min,
-                                             playerLocalTime.sec)
-            
-            local player = game.Players.LocalPlayer
-            local playerUserId = player.UserId
-            local playerProfileUrl = "https://www.roblox.com/users/" .. playerUserId .. "/profile"
-
-            local MoneyPlayer = game:GetService("Players").LocalPlayer.leaderstats["C$"].Value
-            local LvlPlayer = game:GetService("Players").LocalPlayer.leaderstats.Level.Value
-
-            local Embed = {
-                title = 'Lock Hub',
-                color = 0x30D5C8,
-                fields = {
-                    { name = 'Player Profile', value = playerProfileUrl },
-                    { name = '', value = '', },
-                    { name = 'Money💸', value = '```' .. MoneyPlayer .. '```', inline = true },
-                    { name = 'Level🎣', value = '```' .. LvlPlayer .. '```', inline = true },
-                    { name = '', value = '', },
-                    { name = 'Current Time', value = formattedLocalTime },
-                },
-                timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ', OSTime),
-            }
-            local success, response = pcall(function()
-                return (syn and syn.request or http_request) {
-                    Url = WebhookUrl,
-                    Method = 'POST',
-                    Headers = { ['Content-Type'] = 'application/json' },
-                    Body = game:GetService('HttpService'):JSONEncode({
-                        username = 'Lock Hub | Fisch',
-                        avatar_url = 'https://cdn.discordapp.com/attachments/1222979188030701588/1312207019100606534/67c5d7f18b280eb9651581406e7bdfd6.jpg?ex=674ba784&is=674a5604&hm=07670c4aec3ed5381fb33e70108b6a68b1ca26e3ce1f687aa082769b74918271&',
-                        embeds = { Embed }
-                    }),
-                }
-            end)
-        end
-    end)
-end
-function AutoSellz()
-    spawn(function()
-        while AutoSell do
-            SellFishAndReturnAll()
-            task.wait(AutoSellDelay)
-        end
-    end)
-end
-function Appraise()
-    spawn(function()
-        while AutoAppraiser do
-            workspace:WaitForChild("world"):WaitForChild("npcs"):WaitForChild("Appraiser"):WaitForChild("appraiser"):WaitForChild("appraise"):InvokeServer()
-            task.wait(0.1)
-        end
-    end)
-end
-
-function SellFishAndReturnAll()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local rootPart = character:WaitForChild("HumanoidRootPart")
-    local currentPosition = rootPart.CFrame
-    local sellPosition = CFrame.new(464, 151, 232)
-    local wasAutoFreezeActive = false
-    if AutoFreeze then
-        wasAutoFreezeActive = true
-        AutoFreeze = false
-    end
-    rootPart.CFrame = sellPosition
-    task.wait(0.5)
-    workspace:WaitForChild("world"):WaitForChild("npcs"):WaitForChild("Marc Merchant"):WaitForChild("merchant"):WaitForChild("sellall"):InvokeServer()
-    task.wait(3)
-
-    rootPart.CFrame = currentPosition
-
-    if wasAutoFreezeActive then
-        AutoFreeze = true
-        rememberPosition()
-    end
-end
-function SellFishAndReturnOne()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local rootPart = character:WaitForChild("HumanoidRootPart")
-    local currentPosition = rootPart.CFrame
-    local sellPosition = CFrame.new(464, 151, 232)
-    local wasAutoFreezeActive = false
-    if AutoFreeze then
-        wasAutoFreezeActive = true
-        AutoFreeze = false
-    end
-    rootPart.CFrame = sellPosition
-    task.wait(0.5)
-    workspace:WaitForChild("world"):WaitForChild("npcs"):WaitForChild("Marc Merchant"):WaitForChild("merchant"):WaitForChild("sell"):InvokeServer()
-    task.wait(3)
-
-    rootPart.CFrame = currentPosition
-
-    if wasAutoFreezeActive then
-        AutoFreeze = true
-        rememberPosition()
-    end
-end
+return Library
