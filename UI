@@ -62,6 +62,13 @@ function Library:new(options)
 		GUI["1"] = Instance.new("ScreenGui", runService:IsStudio() and players.LocalPlayer:WaitForChild("PlayerGui") or coreGui);
 		GUI["1"]["Name"] = [[Kaos]];
 		GUI["1"]["IgnoreGuiInset"] = true
+		GUI["1"].ResetOnSpawn = false
+
+		uis.InputChanged:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement then
+				print("Mouse moved!") -- This should print every time the mouse moves
+			end
+		end)
 
 		-- Create the custom cursor
 local cursor = Instance.new("ImageLabel")
@@ -70,8 +77,12 @@ cursor.Size = UDim2.new(0, 32, 0, 32) -- Set cursor size
 cursor.AnchorPoint = Vector2.new(0.5, 0.5)
 cursor.BackgroundTransparency = 1
 cursor.Image = "rbxassetid://97248240624664" -- Replace with your valid cursor image asset ID
-cursor.ZIndex = 10 -- Ensure it's above other UI elements
+cursor.ZIndex = 100 -- Ensure it's above other UI elements
 cursor.Parent = GUI["1"] -- Parent it to the ScreenGui
+cursor.Position = UDim2.new(0, input.Position.X, 0, input.Position.Y) -- Map to entire screen
+cursor.Visible = true -- Ignore frame boundaries for now
+
+
 
 		-- StarterGui.Kaos.Main
 		GUI["2"] = Instance.new("ImageLabel", GUI["1"]);
