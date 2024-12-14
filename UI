@@ -104,14 +104,13 @@ function Library:new(options)
 		GUI["1f"]["Name"] = [[ContentContainer]];
 		GUI["1f"]["BackgroundTransparency"] = 1;
 
-		GUI["Cursor"] = Instance.new("ImageLabel", GUI["2"])
-
-		-- Customize Cursor
+		GUI["Cursor"] = Instance.new("ImageLabel", GUI["1"])
 		GUI["Cursor"]["Name"] = "CustomCursor"
 		GUI["Cursor"]["Size"] = UDim2.new(0, 32, 0, 32) -- Cursor size
 		GUI["Cursor"]["AnchorPoint"] = Vector2.new(0.5, 0.5)
 		GUI["Cursor"]["BackgroundTransparency"] = 1
-		GUI["Cursor"]["Image"] = "rbxassetid://13333189503" -- Replace with your custom cursor image asset ID
+		GUI["Cursor"]["Image"] = "rbxassetid://97248240624664" -- Replace with your custom cursor image asset ID
+		GUI["Cursor"]["Parent"] = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 		
 		-- Update Cursor Position
