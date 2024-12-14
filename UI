@@ -110,7 +110,6 @@ function Library:new(options)
 		GUI["Cursor"]["AnchorPoint"] = Vector2.new(0.5, 0.5)
 		GUI["Cursor"]["BackgroundTransparency"] = 1
 		GUI["Cursor"]["Image"] = "rbxassetid://97248240624664" -- Replace with your custom cursor image asset ID
-		GUI["Cursor"]["Parent"] = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 		
 		-- Update Cursor Position
