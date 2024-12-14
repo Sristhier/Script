@@ -8,19 +8,6 @@ local mouse = lp:GetMouse()
 local uis = game:GetService("UserInputService")
 
 
-
-
-
--- Hide the default mouse icon
-uis.MouseIconEnabled = false
-
--- Update cursor position as the mouse moves
-uis.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        cursor.Position = UDim2.new(0, input.Position.X, 0, input.Position.Y)
-    end
-end)
-
 -- Variables
 local viewport = workspace.CurrentCamera.ViewportSize
 local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
