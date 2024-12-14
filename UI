@@ -6,7 +6,7 @@ local coreGui = game:GetService("CoreGui")
 local lp = game:GetService("Players").LocalPlayer
 local mouse = lp:GetMouse()
 local uis = game:GetService("UserInputService")
-
+uis.MouseIconEnabled = true
 
 -- Variables
 local viewport = workspace.CurrentCamera.ViewportSize
