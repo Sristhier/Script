@@ -49,6 +49,7 @@ function Library:new(options)
 		GUI["1"] = Instance.new("ScreenGui", runService:IsStudio() and players.LocalPlayer:WaitForChild("PlayerGui") or coreGui);
 		GUI["1"]["Name"] = [[Kaos]];
 		GUI["1"]["IgnoreGuiInset"] = false 
+		GUI["1"].ZIndex = 1
 
 
 
@@ -63,7 +64,7 @@ function Library:new(options)
 		GUI["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 		GUI["2"]["Name"] = [[Main]];
 		GUI["2"]["Position"] = UDim2.fromOffset((viewport.X/2) - (GUI["2"].Size.X.Offset /2), (viewport.Y/2) - (GUI["2"].Size.Y.Offset /2));
-
+		GUI["2"].ZIndex = 2
 		
 
 		-- StarterGui.Kaos.Main.UICorner
@@ -104,38 +105,6 @@ function Library:new(options)
 		GUI["1f"]["Name"] = [[ContentContainer]];
 		GUI["1f"]["BackgroundTransparency"] = 1;
 
--- Create the custom cursor and parent it to GUI["2"]
-GUI["Cursor"] = Instance.new("ImageLabel", GUI["2"])
-GUI["Cursor"]["Name"] = "CustomCursor"
-GUI["Cursor"]["Size"] = UDim2.new(0, 32, 0, 32) -- Set cursor size (ensure this matches your image dimensions)
-GUI["Cursor"]["AnchorPoint"] = Vector2.new(0.5, 0.5) -- Anchor point at center
-GUI["Cursor"]["BackgroundTransparency"] = 1
-GUI["Cursor"]["Image"] = "rbxassetid://97248240624664" -- Replace with your valid cursor image asset ID
-GUI["Cursor"]["ZIndex"] = 100 -- Ensure it's above other UI elements
-GUI["Cursor"]["Visible"] = true -- Make the cursor visible
-
--- Hide the default mouse icon
-uis.MouseIconEnabled = false
-
--- Track and update the custom cursor's position globally
-uis.InputChanged:Connect(function(input)
-    -- Check for mouse movement
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        if input.Position then
-            -- Get the mouse's position
-            local mouseX = input.Position.X
-            local mouseY = input.Position.Y
-
-            -- Convert screen position to UI position relative to the game window
-            local viewportSize = workspace.CurrentCamera.ViewportSize
-
-            -- Update the custom cursor position to be centered around the mouse position
-            -- Adjust the custom cursor's position to match the default cursor position
-            -- Calculate position relative to the screen
-            GUI["Cursor"].Position = UDim2.new(0, mouseX - (GUI["Cursor"].Size.X.Offset / 2), 0, mouseY - (GUI["Cursor"].Size.Y.Offset / 2))
-        end
-    end
-end)
 
 
 
