@@ -104,7 +104,7 @@ function Library:new(options)
 		GUI["1f"]["Name"] = [[ContentContainer]];
 		GUI["1f"]["BackgroundTransparency"] = 1;
 
-		GUI["Cursor"] = Instance.new("ImageLabel", GUI["1"])
+		GUI["Cursor"] = Instance.new("ImageLabel", GUI["2"])
 		GUI["Cursor"]["Name"] = "CustomCursor"
 		GUI["Cursor"]["Size"] = UDim2.new(0, 32, 0, 32) -- Cursor size
 		GUI["Cursor"]["AnchorPoint"] = Vector2.new(0.5, 0.5)
