@@ -108,7 +108,7 @@ function Library:new(options)
 GUI["Cursor"] = Instance.new("ImageLabel", GUI["2"])
 GUI["Cursor"]["Name"] = "CustomCursor"
 GUI["Cursor"]["Size"] = UDim2.new(0, 32, 0, 32) -- Set cursor size
-GUI["Cursor"]["AnchorPoint"] = Vector2.new(0.5, 0.5) -- Ensure anchor point is at the center
+GUI["Cursor"]["AnchorPoint"] = Vector2.new(0.5, 0.5) -- Anchor point at center
 GUI["Cursor"]["BackgroundTransparency"] = 1
 GUI["Cursor"]["Image"] = "rbxassetid://97248240624664" -- Replace with your valid cursor image asset ID
 GUI["Cursor"]["ZIndex"] = 100 -- Ensure it's above other UI elements
@@ -123,11 +123,22 @@ uis.InputChanged:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement then
         if input.Position then
             -- Calculate the adjusted position for the custom cursor
+
+            -- Get the offset for centering the cursor
             local cursorX = input.Position.X - GUI["Cursor"].Size.X.Offset / 2
             local cursorY = input.Position.Y - GUI["Cursor"].Size.Y.Offset / 2
-            
-            -- Update the cursor's position based on the mouse position and its size offset
-            GUI["Cursor"].Position = UDim2.new(0, cursorX, 0, cursorY)
+
+            -- Adjust for any discrepancies in position
+            -- Consider the absolute position of the GUI["2"] frame
+            local guiPosition = GUI["2"].AbsolutePosition
+
+            -- Ensure the cursor stays within the frame bounds
+            if input.Position.X >= guiPosition.X and input.Position.X <= guiPosition.X + GUI["2"].AbsoluteSize.X then
+                if input.Position.Y >= guiPosition.Y and input.Position.Y <= guiPosition.Y + GUI["2"].AbsoluteSize.Y then
+                    -- Update the custom cursor position
+                    GUI["Cursor"].Position = UDim2.new(0, cursorX, 0, cursorY)
+                end
+            end
         end
     end
 end)
