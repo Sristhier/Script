@@ -11,6 +11,16 @@ local uis = game:GetService("UserInputService")
 
 
 
+-- Hide the default mouse icon
+uis.MouseIconEnabled = false
+
+-- Update cursor position as the mouse moves
+uis.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        cursor.Position = UDim2.new(0, input.Position.X, 0, input.Position.Y)
+    end
+end)
+
 -- Variables
 local viewport = workspace.CurrentCamera.ViewportSize
 local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
@@ -52,6 +62,16 @@ function Library:new(options)
 		GUI["1"] = Instance.new("ScreenGui", runService:IsStudio() and players.LocalPlayer:WaitForChild("PlayerGui") or coreGui);
 		GUI["1"]["Name"] = [[Kaos]];
 		GUI["1"]["IgnoreGuiInset"] = true
+
+		-- Create the custom cursor
+local cursor = Instance.new("ImageLabel")
+cursor.Name = "CustomCursor"
+cursor.Size = UDim2.new(0, 32, 0, 32) -- Set cursor size
+cursor.AnchorPoint = Vector2.new(0.5, 0.5)
+cursor.BackgroundTransparency = 1
+cursor.Image = "rbxassetid://97248240624664" -- Replace with your valid cursor image asset ID
+cursor.ZIndex = 10 -- Ensure it's above other UI elements
+cursor.Parent = GUI["1"] -- Parent it to the ScreenGui
 
 		-- StarterGui.Kaos.Main
 		GUI["2"] = Instance.new("ImageLabel", GUI["1"]);
@@ -102,44 +122,6 @@ function Library:new(options)
 		GUI["1f"]["Name"] = [[ContentContainer]];
 		GUI["1f"]["BackgroundTransparency"] = 1;
 
-
-
--- Create the custom cursor
-local cursor = Instance.new("ImageLabel")
-cursor.Name = "CustomCursor"
-cursor.Size = UDim2.new(0, 32, 0, 32) -- Cursor size
-cursor.AnchorPoint = Vector2.new(0.5, 0.5)
-cursor.BackgroundTransparency = 1
-cursor.Image = "rbxassetid://97248240624664" -- Replace with your cursor image asset ID
-cursor.ZIndex = 10 -- Ensures it's above other UI elements
-cursor.Parent = contentContainer -- Parent it to the frame
-
--- Hide default mouse icon
-uis.MouseIconEnabled = false
-
--- Update the cursor position as the mouse moves
-uis.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        -- Convert mouse position to UI space
-        local viewportSize = workspace.CurrentCamera.ViewportSize
-        local relativeX = input.Position.X / viewportSize.X
-        local relativeY = input.Position.Y / viewportSize.Y
-
-        -- Update the cursor position relative to the frame
-        local frameSize = contentContainer.AbsoluteSize
-        local framePosition = contentContainer.AbsolutePosition
-
-        -- Check if the mouse is inside the frame boundaries
-        if input.Position.X >= framePosition.X and input.Position.X <= framePosition.X + frameSize.X and
-           input.Position.Y >= framePosition.Y and input.Position.Y <= framePosition.Y + frameSize.Y then
-            -- Set cursor position inside the frame
-            cursor.Position = UDim2.new(0, input.Position.X - framePosition.X, 0, input.Position.Y - framePosition.Y)
-            cursor.Visible = true
-        else
-            cursor.Visible = false -- Hide cursor when outside the frame
-        end
-    end
-end)
 
 	end 
 
