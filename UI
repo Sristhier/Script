@@ -114,14 +114,17 @@ GUI["Cursor"]["Image"] = "rbxassetid://97248240624664" -- Replace with your vali
 GUI["Cursor"]["ZIndex"] = 100 -- Ensure it's above other UI elements
 GUI["Cursor"]["Visible"] = true -- Make the cursor visible
 
-
+-- Hide the default mouse icon
+uis.MouseIconEnabled = false
 
 -- Update the custom cursor's position when the mouse moves
 uis.InputChanged:Connect(function(input)
     -- Ensure we are only tracking mouse movement
     if input.UserInputType == Enum.UserInputType.MouseMovement then
-        -- Update the cursor's position based on the mouse position
-        GUI["Cursor"].Position = UDim2.new(0, input.Position.X, 0, input.Position.Y)
+        if input.Position then
+            -- Update the cursor's position based on the mouse position
+            GUI["Cursor"].Position = UDim2.new(0, input.Position.X, 0, input.Position.Y)
+        end
     end
 end)
 
