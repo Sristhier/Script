@@ -7,6 +7,9 @@ local lp = game:GetService("Players").LocalPlayer
 local mouse = lp:GetMouse()
 local uis = game:GetService("UserInputService")
 
+local cursor = Instance.new("ImageLabel")
+
+
 uis.MouseIconEnabled = true
 
 
@@ -100,7 +103,26 @@ function Library:new(options)
 		GUI["1f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 		GUI["1f"]["Name"] = [[ContentContainer]];
 		GUI["1f"]["BackgroundTransparency"] = 1;
+
+		GUI["Cursor"] = Instance.new("ImageLabel", GUI["2"])
+
+		-- Customize Cursor
+		GUI["Cursor"]["Name"] = "CustomCursor"
+		GUI["Cursor"]["Size"] = UDim2.new(0, 32, 0, 32) -- Cursor size
+		GUI["Cursor"]["AnchorPoint"] = Vector2.new(0.5, 0.5)
+		GUI["Cursor"]["BackgroundTransparency"] = 1
+		GUI["Cursor"]["Image"] = "rbxassetid://13333189503" -- Replace with your custom cursor image asset ID
+
+		
+		-- Update Cursor Position
+		uis.InputChanged:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement then
+				cursor.Position = UDim2.new(0, input.Position.X, 0, input.Position.Y)
+			end
+		end)
 	end
+
+
 	
 	
 
