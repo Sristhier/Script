@@ -126,6 +126,11 @@ uis.InputChanged:Connect(function(input)
             local mouseX = input.Position.X
             local mouseY = input.Position.Y
 
+            -- Convert screen position to UI position relative to the game window
+            local viewportSize = workspace.CurrentCamera.ViewportSize
+            local screenWidth = viewportSize.X
+            local screenHeight = viewportSize.Y
+
             -- Update the custom cursor position to be centered around the mouse position
             -- Adjust the custom cursor's position to match the default cursor position
             GUI["Cursor"].Position = UDim2.new(0, mouseX - (GUI["Cursor"].Size.X.Offset / 2), 0, mouseY - (GUI["Cursor"].Size.Y.Offset / 2))
