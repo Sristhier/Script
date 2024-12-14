@@ -48,7 +48,8 @@ function Library:new(options)
 		-- StarterGui.Kaos
 		GUI["1"] = Instance.new("ScreenGui", runService:IsStudio() and players.LocalPlayer:WaitForChild("PlayerGui") or coreGui);
 		GUI["1"]["Name"] = [[Kaos]];
-		GUI["1"]["IgnoreGuiInset"] = false
+		GUI["1"]["IgnoreGuiInset"] = false 
+		GUI["1"]["MouseHoverGui"] = false 
 
 
 
@@ -126,14 +127,15 @@ uis.InputChanged:Connect(function(input)
             local mouseX = input.Position.X
             local mouseY = input.Position.Y
 
-            -- Convert screen position to UI position relative to the game window
-            local viewportSize = workspace.CurrentCamera.ViewportSize
-            local screenWidth = viewportSize.X
-            local screenHeight = viewportSize.Y
+            -- Get the GUI Inset to account for any UI offsets (like top bar)
+            local guiInset = uis:GetGuiInset()
+            local offsetX = guiInset.X
+            local offsetY = guiInset.Y
 
-            -- Update the custom cursor position to be centered around the mouse position
-            -- Adjust the custom cursor's position to match the default cursor position
-            GUI["Cursor"].Position = UDim2.new(0, mouseX - (GUI["Cursor"].Size.X.Offset / 2), 0, mouseY - (GUI["Cursor"].Size.Y.Offset / 2))
+            -- Update the custom cursor position
+            -- Adjust for the GUI Inset and center the cursor
+            GUI["Cursor"].Position = UDim2.new(0, mouseX - offsetX - (GUI["Cursor"].Size.X.Offset / 2), 
+                                               0, mouseY - offsetY - (GUI["Cursor"].Size.Y.Offset / 2))
         end
     end
 end)
