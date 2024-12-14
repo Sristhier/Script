@@ -49,7 +49,6 @@ function Library:new(options)
 		GUI["1"] = Instance.new("ScreenGui", runService:IsStudio() and players.LocalPlayer:WaitForChild("PlayerGui") or coreGui);
 		GUI["1"]["Name"] = [[Kaos]];
 		GUI["1"]["IgnoreGuiInset"] = false 
-		GUI["1"].ZIndex = 1
 
 
 
