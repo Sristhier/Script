@@ -102,8 +102,7 @@ function Library:new(options)
 		GUI["1f"]["Name"] = [[ContentContainer]];
 		GUI["1f"]["BackgroundTransparency"] = 1;
 
-		-- Reference to the ContentContainer frame
-local contentContainer = GUI["1f"]
+
 
 -- Create the custom cursor
 local cursor = Instance.new("ImageLabel")
