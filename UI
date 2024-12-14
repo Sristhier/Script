@@ -8,6 +8,7 @@ local mouse = lp:GetMouse()
 local uis = game:GetService("UserInputService")
 uis.MouseIconEnabled = true
 
+
 -- Variables
 local viewport = workspace.CurrentCamera.ViewportSize
 local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
@@ -48,10 +49,7 @@ function Library:new(options)
 		-- StarterGui.Kaos
 		GUI["1"] = Instance.new("ScreenGui", runService:IsStudio() and players.LocalPlayer:WaitForChild("PlayerGui") or coreGui);
 		GUI["1"]["Name"] = [[Kaos]];
-		GUI["1"]["IgnoreGuiInset"] = false 
-
-
-
+		GUI["1"]["IgnoreGuiInset"] = true
 
 		-- StarterGui.Kaos.Main
 		GUI["2"] = Instance.new("ImageLabel", GUI["1"]);
@@ -63,8 +61,6 @@ function Library:new(options)
 		GUI["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 		GUI["2"]["Name"] = [[Main]];
 		GUI["2"]["Position"] = UDim2.fromOffset((viewport.X/2) - (GUI["2"].Size.X.Offset /2), (viewport.Y/2) - (GUI["2"].Size.Y.Offset /2));
-		GUI["2"].ZIndex = 2
-		
 
 		-- StarterGui.Kaos.Main.UICorner
 		GUI["3"] = Instance.new("UICorner", GUI["2"]);
@@ -103,13 +99,7 @@ function Library:new(options)
 		GUI["1f"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 		GUI["1f"]["Name"] = [[ContentContainer]];
 		GUI["1f"]["BackgroundTransparency"] = 1;
-
-
-
-
-	end 
-
-
+	end
 	
 	
 
