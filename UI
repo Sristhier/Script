@@ -10,7 +10,6 @@ local uis = game:GetService("UserInputService")
 local cursor = Instance.new("ImageLabel")
 
 
-uis.MouseIconEnabled = true
 
 
 -- Variables
@@ -104,6 +103,8 @@ function Library:new(options)
 		GUI["1f"]["Name"] = [[ContentContainer]];
 		GUI["1f"]["BackgroundTransparency"] = 1;
 
+		--[[ 
+		
 		GUI["Cursor"] = Instance.new("ImageLabel", GUI["1f"])
 		GUI["Cursor"]["Name"] = "CustomCursor"
 		GUI["Cursor"]["Size"] = UDim2.new(0, 32, 0, 32) -- Cursor size
@@ -117,8 +118,8 @@ function Library:new(options)
 			if input.UserInputType == Enum.UserInputType.MouseMovement then
 				cursor.Position = UDim2.new(0, input.Position.X, 0, input.Position.Y)
 			end
-		end)
-	end
+		end)	--]]
+	end 
 
 
 	
