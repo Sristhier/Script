@@ -207,7 +207,7 @@ function Library:new(options)
 
 
 	local function closeMainFrameLabel()
-		MainFrameLabel.Visible = false  
+		MainFrameLabel:Destroy()
 	end
 
 	exitButton.MouseButton1Click:Connect(closeMainFrameLabel)
@@ -220,7 +220,7 @@ function Library:new(options)
 	end
 
 	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-		if input.KeyCode == Enum.KeyCode.LeftControl and not gameProcessedEvent then
+		if input.KeyCode == Enum.KeyCode.M and not gameProcessedEvent then
 			toggleVisibility()
 		end
 	end)
