@@ -299,10 +299,12 @@ function Library:new(options)
 		local userLabel = GUI["e"]
 		local versionLabel = GUI["d"]
 
+		local MarketplaceService = game:GetService("MarketplaceService")
+
 		local function ChangeTxt()
-			userLabel.Text = "".. game.Name
+			local placeInfo = MarketplaceService:GetPlaceInfoAsync(game.PlaceId) 
+			userLabel.Text = placeInfo.Name 
 		end
-	
 		
 		local function ChangeVersion()
 			versionLabel.Text = "1.0.0"
