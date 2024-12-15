@@ -61,6 +61,7 @@ function Library:new(options)
 		GUI["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 		GUI["2"]["Name"] = [[Main]];
 		GUI["2"]["Position"] = UDim2.fromOffset((viewport.X/2) - (GUI["2"].Size.X.Offset /2), (viewport.Y/2) - (GUI["2"].Size.Y.Offset /2));
+		GUI["2"]["BackgroundTransparency"] = 0.4 -- NEW -----------------------------------------------------
 
 		-- StarterGui.Kaos.Main.UICorner
 		GUI["3"] = Instance.new("UICorner", GUI["2"]);
