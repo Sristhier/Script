@@ -299,11 +299,21 @@ function Library:new(options)
 		local userLabel = GUI["e"]
 		local versionLabel = GUI["d"]
 
-		local MarketplaceService = game:GetService("MarketplaceService")
-
+		local gameNames = {
+			[18668065416] = "[UPD] Blue Lock: Rivals",  
+			[987654321] = "NaN",  
+			[112233445] = "NaN",      
+		}
+		
 		local function ChangeTxt()
-			local placeInfo = MarketplaceService:GetPlaceInfoAsync(game.PlaceId) 
-			userLabel.Text = placeInfo.Name 
+			local placeId = game.PlaceId  
+			local gameName = gameNames[placeId] 
+		
+			if gameName then
+				userLabel.Text = gameName  
+			else
+				userLabel.Text = "N/A"  
+			end
 		end
 		
 		local function ChangeVersion()
