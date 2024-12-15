@@ -300,11 +300,7 @@ function Library:new(options)
 		local versionLabel = GUI["d"]
 
 		local function ChangeTxt()
-			if lp.DisplayName == lp.Name then
-				userLabel.Text = "Hidden" 
-			else 
-				userLabel.Text = lp.DisplayName
-			end
+			userLabel.Text = "".. game.Name
 		end
 	
 		
