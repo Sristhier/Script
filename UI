@@ -17,11 +17,6 @@ local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection
 
 local Library = {}
 
-_G.GUI = {}  -- Make a global GUI table
-
-local GUI = _G.GUI  -- Referencing the global GUI table
-
-
 
 function Library:validate(default, options)
 	for i, v in pairs(default) do
@@ -234,8 +229,7 @@ function Library:new(options)
 
 
 	_G.ToggleUIVisibility = toggleVisibility
-
-
+	
 	-- BottomBar Section 
 	do
 		-- StarterGui.Kaos.Main.BottomBar
@@ -330,11 +324,6 @@ function Library:new(options)
 
 		ChangeTxt()
 		ChangeVersion()
-
-		local isTransparent = false 
-
-
-
 
 	end
 	
