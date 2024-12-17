@@ -228,6 +228,8 @@ function Library:new(options)
 	end)
 
 
+	_G.ToggleUIVisibility = toggleVisibility
+
 	
 	-- BottomBar Section 
 	do
