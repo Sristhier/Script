@@ -216,19 +216,23 @@ function Library:new(options)
 
 	local isVisible = false
 
+	local UserInputService = game:GetService("UserInputService")
+	local isVisible = true 
+	local MainFrameLabel = script.Parent:WaitForChild("MainFrame") -- Replace with the correct frame path
+	
 	local function toggleVisibility()
 		isVisible = not isVisible
 		MainFrameLabel.Visible = isVisible
 	end
-
+	
 	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		if input.KeyCode == Enum.KeyCode.M and not gameProcessedEvent then
 			toggleVisibility()
 		end
 	end)
-
-
+	
 	_G.ToggleUIVisibility = toggleVisibility
+	
 	
 	-- BottomBar Section 
 	do
