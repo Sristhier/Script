@@ -218,7 +218,6 @@ function Library:new(options)
 
 	local UserInputService = game:GetService("UserInputService")
 	local isVisible = true 
-	local MainFrameLabel = script.Parent:WaitForChild("MainFrame") -- Replace with the correct frame path
 	
 	local function toggleVisibility()
 		isVisible = not isVisible
