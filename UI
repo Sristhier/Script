@@ -1274,7 +1274,7 @@ end)
 					if gpe then return end
 					
 				
-					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch and item.Hover then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 and item.Hover then 
 						item.MouseDown = true
 						Library:tween(Dropdown.Items[id].instance["42"], {BackgroundColor3 = Color3.fromRGB(14, 14, 14)})
 						Library:tween(Dropdown.Items[id].instance["43"], {Color = Color3.fromRGB(0, 150, 158)})
@@ -1289,7 +1289,7 @@ end)
 					if gpe then return end
 					
 					if Dropdown.Items[id] == nil then return end
-					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
 						item.MouseDown = false
 						if item.Hover then
 							Library:tween(Dropdown.Items[id].instance["42"], {BackgroundColor3 = Color3.fromRGB(14, 14, 14)})
