@@ -1082,7 +1082,7 @@ end)
 				uis.InputBegan:Connect(function(input, gpe)
 					if gpe then return end
 
-					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch and Slider.Hover then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 and Slider.Hover then 
 						Slider.MouseDown = true
 						Library:tween(Slider["2f"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
 						Library:tween(Slider["2f"], {BackgroundTransparency = 0.95})
@@ -1099,7 +1099,7 @@ end)
 				uis.InputEnded:Connect(function(input, gpe)
 					if gpe then return end
 
-					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
 						Slider.MouseDown = false
 
 						if Slider.Hover then
