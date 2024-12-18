@@ -322,7 +322,7 @@ function Library:new(options)
 		end
 		
 		local function ChangeVersion()
-			versionLabel.Text = "1.3a"
+			versionLabel.Text = "1.35a"
 			wait(1)
 		end
 
