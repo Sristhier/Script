@@ -268,7 +268,7 @@ end)
 		GUI["d"]["BackgroundTransparency"] = 1;
 		GUI["d"]["Size"] = UDim2.new(0.16, 0, 1, 0);
 		GUI["d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-		GUI["d"]["Text"] = [[Version 1.3a]];
+		GUI["d"]["Text"] = [[Version 1.35a]];
 		GUI["d"]["Name"] = [[Version]];
 
 		-- StarterGui.Kaos.Main.BottomBar.User
