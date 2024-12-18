@@ -230,14 +230,6 @@ function Library:new(options)
 		end
 	end)
 
-	local lastTapTime = 0
-UserInputService.TouchTap:Connect(function(touchPositions, gameProcessedEvent)
-    local currentTime = tick()
-    if currentTime - lastTapTime < 0.3 then 
-        toggleVisibility()
-    end
-    lastTapTime = currentTime
-end)
 	
 	_G.ToggleUIVisibility = toggleVisibility
 	
