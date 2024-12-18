@@ -537,7 +537,7 @@ function Library:new(options)
 			end)
 
 			uis.InputBegan:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 					if Tab.Hover then 
 						Tab:Activate()
 					end
@@ -649,7 +649,7 @@ function Library:new(options)
 				uis.InputBegan:Connect(function(input, gpe)
 					if gpe then return end
 					
-					if input.UserInputType == Enum.UserInputType.MouseButton1 and Button.Hover then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch and Button.Hover then 
 						Button.MouseDown = true
 						Library:tween(Button["24"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
 						Library:tween(Button["24"], {BackgroundTransparency = 0.95})
@@ -662,7 +662,7 @@ function Library:new(options)
 				uis.InputEnded:Connect(function(input, gpe)
 					if gpe then return end
 
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
 						Button.MouseDown = false
 						
 						if Button.Hover then
@@ -1082,7 +1082,7 @@ end)
 				uis.InputBegan:Connect(function(input, gpe)
 					if gpe then return end
 
-					if input.UserInputType == Enum.UserInputType.MouseButton1 and Slider.Hover then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch and Slider.Hover then 
 						Slider.MouseDown = true
 						Library:tween(Slider["2f"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
 						Library:tween(Slider["2f"], {BackgroundTransparency = 0.95})
@@ -1099,7 +1099,7 @@ end)
 				uis.InputEnded:Connect(function(input, gpe)
 					if gpe then return end
 
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
 						Slider.MouseDown = false
 
 						if Slider.Hover then
@@ -1274,7 +1274,7 @@ end)
 					if gpe then return end
 					
 				
-					if input.UserInputType == Enum.UserInputType.MouseButton1 and item.Hover then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch and item.Hover then 
 						item.MouseDown = true
 						Library:tween(Dropdown.Items[id].instance["42"], {BackgroundColor3 = Color3.fromRGB(14, 14, 14)})
 						Library:tween(Dropdown.Items[id].instance["43"], {Color = Color3.fromRGB(0, 150, 158)})
@@ -1289,7 +1289,7 @@ end)
 					if gpe then return end
 					
 					if Dropdown.Items[id] == nil then return end
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
 						item.MouseDown = false
 						if item.Hover then
 							Library:tween(Dropdown.Items[id].instance["42"], {BackgroundColor3 = Color3.fromRGB(14, 14, 14)})
@@ -1354,7 +1354,7 @@ end)
 
 				uis.InputBegan:Connect(function(input, gpe)
 					if gpe then return end
-					if input.UserInputType == Enum.UserInputType.MouseButton1 and Dropdown.Hover then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch and Dropdown.Hover then 
 						Dropdown.MouseDown = true
 						Library:tween(Dropdown["3a"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
 						Library:tween(Dropdown["3f"], {Color = Color3.fromRGB(0, 150, 158)})
@@ -1368,7 +1368,7 @@ end)
 
 				uis.InputEnded:Connect(function(input, gpe)
 					if gpe then return end
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
 						Dropdown.MouseDown = false
 						if Dropdown.Hover then
 							Library:tween(Dropdown["3a"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
