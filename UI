@@ -229,6 +229,15 @@ function Library:new(options)
 			toggleVisibility()
 		end
 	end)
+
+	local lastTapTime = 0
+UserInputService.TouchTap:Connect(function(touchPositions, gameProcessedEvent)
+    local currentTime = tick()
+    if currentTime - lastTapTime < 0.3 then 
+        toggleVisibility()
+    end
+    lastTapTime = currentTime
+end)
 	
 	_G.ToggleUIVisibility = toggleVisibility
 	
@@ -890,34 +899,34 @@ function Library:new(options)
 					end
 				end)
 
-				uis.InputBegan:Connect(function(input, gpe)
-					if gpe then return end
+		Toggle["4b"].InputBegan:Connect(function(input, gpe)
+    if gpe then return end
 
-					if input.UserInputType == Enum.UserInputType.MouseButton1 and Toggle.Hover then 
-						Toggle.MouseDown = true
-						Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
-						Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
-						
-						Toggle:Toggle()
-					
-					end
-				end)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        Toggle.MouseDown = true
+        Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+        Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
 
-				uis.InputEnded:Connect(function(input, gpe)
-					if gpe then return end
+        Toggle:Toggle() 
+    end
+end)
 
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
-						Toggle.MouseDown = false
+		Toggle["4b"].InputEnded:Connect(function(input, gpe)
+    if gpe then return end
 
-						if Toggle.Hover then
-							Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
-							Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 150, 158)})		
-						else
-							Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
-							Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
-						end
-					end
-				end)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        Toggle.MouseDown = false
+
+        if Toggle.Hover then
+            Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+            Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 150, 158)})
+        else
+            Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+            Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
+        end
+    end
+end)
+
 			end
 			end
 			
