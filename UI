@@ -1121,7 +1121,6 @@ end)
 			
 			return Slider 
 	end
-	
 		
 
 		
@@ -1706,15 +1705,12 @@ end)
 
 		SearchBar:GetPropertyChangedSignal("Text"):Connect(UpdateElements)
 
-		-- Define a function to create a notification
 		local function CreateNotification(parentFrame, text, imageId, duration)
-			-- Validate inputs and set defaults
 			parentFrame = parentFrame or game:GetService("StarterGui").ScreenGui.Frame
 			text = text or "Notification Text"
 			imageId = imageId or "rbxassetid://18107522271"
-			duration = duration or 3 -- Default duration in seconds
+			duration = duration or 3 
 
-			-- Create notification elements
 			local Notification = {}
 
 			Notification.Frame = Instance.new("Frame")
@@ -1722,21 +1718,19 @@ end)
 			Notification.Frame.BorderSizePixel = 0
 			Notification.Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			Notification.Frame.Size = UDim2.new(0, 281, 0, 57)
-			Notification.Frame.Position = UDim2.new(1, 0, 1, 0) -- Start off-screen
+			Notification.Frame.Position = UDim2.new(1, 0, 1, 0) 
 			Notification.Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 
-			-- ImageLabel
 			Notification.ImageLabel = Instance.new("ImageLabel")
 			Notification.ImageLabel.Parent = Notification.Frame
 			Notification.ImageLabel.BorderSizePixel = 0
 			Notification.ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			Notification.ImageLabel.Image = imageId
 			Notification.ImageLabel.Size = UDim2.new(0, 63, 0, 55)
-			Notification.ImageLabel.Position = UDim2.new(0, 5, 0, 1) -- Slightly offset
+			Notification.ImageLabel.Position = UDim2.new(0, 5, 0, 1) 
 			Notification.ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			Notification.ImageLabel.BackgroundTransparency = 1
 
-			-- UICorner for ImageLabel
 			local imageCorner = Instance.new("UICorner")
 			imageCorner.Parent = Notification.ImageLabel
 			imageCorner.CornerRadius = UDim.new(0, 100)
@@ -1752,21 +1746,18 @@ end)
 			Notification.TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 			Notification.TextLabel.BackgroundTransparency = 1
 			Notification.TextLabel.Size = UDim2.new(0, 209, 0, 55)
-			Notification.TextLabel.Position = UDim2.new(0.15, 0, 0, 0) -- Slightly offset
+			Notification.TextLabel.Position = UDim2.new(0.15, 0, 0, 0) 
 			Notification.TextLabel.Text = text
 
-			-- UIStroke
 			local stroke = Instance.new("UIStroke")
 			stroke.Parent = Notification.Frame
 			stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 			stroke.Color = Color3.fromRGB(0, 130, 130)
 
-			-- UICorner for Frame
 			local frameCorner = Instance.new("UICorner")
 			frameCorner.Parent = Notification.Frame
 			frameCorner.CornerRadius = UDim.new(0, 4)
 
-			-- UIGradient
 			local gradient = Instance.new("UIGradient")
 			gradient.Parent = Notification.Frame
 			gradient.Rotation = 90
@@ -1775,18 +1766,15 @@ end)
 				ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 36, 36))
 			}
 
-			-- Tween the notification into view
-			local endPosition = UDim2.new(1, -300, 1, 0) -- Slide from bottom right
+			local endPosition = UDim2.new(1, -300, 1, 0) 
 			local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
 			game:GetService("TweenService"):Create(Notification.Frame, tweenInfo, {Position = UDim2.new(1, -300, 1, -60)}):Play()
 
-			-- Function to dismiss the notification
 			function Notification:Dismiss()
 				Notification.Frame:Destroy()
 			end
 
-			-- Auto-dismiss after duration
 			spawn(function()
 				wait(duration)
 				Notification:Dismiss()
