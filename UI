@@ -329,38 +329,6 @@ function Library:new(options)
 		ChangeTxt()
 		ChangeVersion()
 
-		local Themes = {
-			Dark = {
-				BackgroundColor = Color3.fromRGB(25, 25, 25),
-				TextColor = Color3.fromRGB(255, 255, 255),
-				ButtonColor = Color3.fromRGB(50, 50, 50),
-				SliderColor = Color3.fromRGB(75, 75, 75),
-				ToggleColor = Color3.fromRGB(100, 100, 100),
-			},
-			Light = {
-				BackgroundColor = Color3.fromRGB(255, 255, 255),
-				TextColor = Color3.fromRGB(0, 0, 0),
-				ButtonColor = Color3.fromRGB(200, 200, 200),
-				SliderColor = Color3.fromRGB(225, 225, 225),
-				ToggleColor = Color3.fromRGB(150, 150, 150),
-			},
-			Transparent = {
-				BackgroundColor = Color3.fromRGB(255, 255, 255),
-				BackgroundTransparency = 0.5,
-				TextColor = Color3.fromRGB(0, 0, 0),
-			},
-			Legacy = {
-				BackgroundColor = Color3.fromRGB(200, 200, 200),
-				TextColor = Color3.fromRGB(50, 50, 50),
-				ButtonColor = Color3.fromRGB(175, 175, 175),
-			},
-			Minecraft = {
-				BackgroundColor = Color3.fromRGB(102, 153, 0),
-				TextColor = Color3.fromRGB(255, 255, 255),
-				Font = Enum.Font.Arcade,
-			},
-		}
-		
 
 		
 		-- Example: Switch to Light Theme
@@ -1857,14 +1825,37 @@ local uiElements = {
     Sliders = Tab.Slider   -- Assuming Sliders are part of Tab
 }
 
-	return Tab
-	end 
-	
-
-
-	return GUI
-end
-
+local Themes = {
+	Dark = {
+		BackgroundColor = Color3.fromRGB(25, 25, 25),
+		TextColor = Color3.fromRGB(255, 255, 255),
+		ButtonColor = Color3.fromRGB(50, 50, 50),
+		SliderColor = Color3.fromRGB(75, 75, 75),
+		ToggleColor = Color3.fromRGB(100, 100, 100),
+	},
+	Light = {
+		BackgroundColor = Color3.fromRGB(255, 255, 255),
+		TextColor = Color3.fromRGB(0, 0, 0),
+		ButtonColor = Color3.fromRGB(200, 200, 200),
+		SliderColor = Color3.fromRGB(225, 225, 225),
+		ToggleColor = Color3.fromRGB(150, 150, 150),
+	},
+	Transparent = {
+		BackgroundColor = Color3.fromRGB(255, 255, 255),
+		BackgroundTransparency = 0.5,
+		TextColor = Color3.fromRGB(0, 0, 0),
+	},
+	Legacy = {
+		BackgroundColor = Color3.fromRGB(200, 200, 200),
+		TextColor = Color3.fromRGB(50, 50, 50),
+		ButtonColor = Color3.fromRGB(175, 175, 175),
+	},
+	Minecraft = {
+		BackgroundColor = Color3.fromRGB(102, 153, 0),
+		TextColor = Color3.fromRGB(255, 255, 255),
+		Font = Enum.Font.Arcade,
+	},
+}
 
 
 -- Apply Theme Function
@@ -1896,19 +1887,33 @@ local function applyTheme(uiElements, theme)
     end
 end
 
+
+
 -- Apply the Desired Theme (e.g., Dark Theme)
 local selectedTheme = Themes.Dark
 applyTheme(uiElements, selectedTheme)
 
 -- Dynamic Theme Switching Example
 local function switchTheme(themeName)
-    local theme = Themes[themeName]
-    if theme then
-        applyTheme(uiElements, theme)
-    else
-        warn("Theme not found:", themeName)
-    end
+local theme = Themes[themeName]
+if theme then
+applyTheme(uiElements, theme)
+else
+warn("Theme not found:", themeName)
 end
+end
+
+
+
+	return Tab
+	end 
+	
+
+
+	return GUI
+end
+
+
 
 
 
