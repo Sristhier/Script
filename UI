@@ -322,7 +322,7 @@ function Library:new(options)
 		end
 		
 		local function ChangeVersion()
-			versionLabel.Text = "1.36a"
+			versionLabel.Text = "1.37a"
 			wait(1)
 		end
 
@@ -361,53 +361,7 @@ function Library:new(options)
 			},
 		}
 		
-		-- Apply Theme Function
-		local function applyTheme(uiElements, theme)
-			for _, element in pairs(uiElements) do
-				if element:IsA("GuiObject") then
-					if theme.BackgroundColor then
-						element.BackgroundColor3 = theme.BackgroundColor
-					end
-					if theme.BackgroundTransparency then
-						element.BackgroundTransparency = theme.BackgroundTransparency
-					end
-					if theme.TextColor and (element:IsA("TextLabel") or element:IsA("TextButton")) then
-						element.TextColor3 = theme.TextColor
-					end
-					if theme.Font and (element:IsA("TextLabel") or element:IsA("TextButton")) then
-						element.Font = theme.Font
-					end
-					if theme.ButtonColor and element.Name == "Button" then
-						element.BackgroundColor3 = theme.ButtonColor
-					end
-					if theme.SliderColor and element.Name == "Slider" then
-						element.BackgroundColor3 = theme.SliderColor
-					end
-					if theme.ToggleColor and element.Name == "Toggle" then
-						element.BackgroundColor3 = theme.ToggleColor
-					end
-				end
-			end
-		end
-		
-		-- Example UI Elements
-		local uiElements = {
-			-- Replace with actual instances of UI elements
-			-- For example:
-			-- Frame, Button, Slider, Toggle
-		}
-		
-		-- Apply the Desired Theme (e.g., Dark Theme)
-		local selectedTheme = Themes.Dark
-		applyTheme(uiElements, selectedTheme)
-		
-		-- Dynamic Theme Switching Example
-		local function switchTheme(themeName)
-			local theme = Themes[themeName]
-			if theme then
-				applyTheme(uiElements, theme)
-			end
-		end
+
 		
 		-- Example: Switch to Light Theme
 		-- switchTheme("Light")
@@ -1646,6 +1600,7 @@ end)
 			return Keybind 
 		end
 
+
 		function Tab:CreateCustom(options)
 			options = Library:validate({
 				name = "Test Custom Image",
@@ -1888,13 +1843,73 @@ end)
 
 			return Notification
 		end
- 
+
+		
+ -- Example UI Elements
+local uiElements = {
+    Tabs = GUI["16"],        -- Navigation or Tabs Holder
+    Buttons = Tab.Button,   -- Assuming Buttons are part of Tab
+    Labels = Tab.Label,     -- Assuming Labels are part of Tab
+    Dropdowns = Tab.Dropdown, -- Assuming Dropdowns are part of Tab
+    Toggles = Tab.Toggle,   -- Assuming Toggles are part of Tab
+    KeyBinds = Tab.CreateKeybind,     -- If KeyBinds exist
+    Background = GUI["2"],   -- Main Frame
+    Sliders = Tab.Slider   -- Assuming Sliders are part of Tab
+}
 
 	return Tab
 	end 
 	
 
+
 	return GUI
 end
+
+
+
+-- Apply Theme Function
+local function applyTheme(uiElements, theme)
+    for _, element in pairs(uiElements) do
+        if element:IsA("GuiObject") then
+            if theme.BackgroundColor then
+                element.BackgroundColor3 = theme.BackgroundColor
+            end
+            if theme.BackgroundTransparency then
+                element.BackgroundTransparency = theme.BackgroundTransparency
+            end
+            if theme.TextColor and (element:IsA("TextLabel") or element:IsA("TextButton")) then
+                element.TextColor3 = theme.TextColor
+            end
+            if theme.Font and (element:IsA("TextLabel") or element:IsA("TextButton")) then
+                element.Font = theme.Font
+            end
+            if theme.ButtonColor and element.Name == "Button" then
+                element.BackgroundColor3 = theme.ButtonColor
+            end
+            if theme.SliderColor and element.Name == "Slider" then
+                element.BackgroundColor3 = theme.SliderColor
+            end
+            if theme.ToggleColor and element.Name == "Toggle" then
+                element.BackgroundColor3 = theme.ToggleColor
+            end
+        end
+    end
+end
+
+-- Apply the Desired Theme (e.g., Dark Theme)
+local selectedTheme = Themes.Dark
+applyTheme(uiElements, selectedTheme)
+
+-- Dynamic Theme Switching Example
+local function switchTheme(themeName)
+    local theme = Themes[themeName]
+    if theme then
+        applyTheme(uiElements, theme)
+    else
+        warn("Theme not found:", themeName)
+    end
+end
+
+
 
 return Library
