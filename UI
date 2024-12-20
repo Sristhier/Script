@@ -260,7 +260,7 @@ function Library:new(options)
 		GUI["d"]["BackgroundTransparency"] = 1;
 		GUI["d"]["Size"] = UDim2.new(0.16, 0, 1, 0);
 		GUI["d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-		GUI["d"]["Text"] = [[Version 1.36a]];
+		GUI["d"]["Text"] = [[Version 1.37a]];
 		GUI["d"]["Name"] = [[Version]];
 
 		-- StarterGui.Kaos.Main.BottomBar.User
@@ -322,7 +322,7 @@ function Library:new(options)
 		end
 		
 		local function ChangeVersion()
-			versionLabel.Text = "1.36a"
+			versionLabel.Text = "1.4a"
 			wait(1)
 		end
 
