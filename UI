@@ -537,7 +537,7 @@ function Library:new(options)
 			end)
 
 			uis.InputBegan:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
 					if Tab.Hover then 
 						Tab:Activate()
 					end
