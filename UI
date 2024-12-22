@@ -169,7 +169,7 @@ function Library:new(options)
 	end
 
 	dragFrame.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			dragging = true
 			dragStart = input.Position
 			startPos = imageLabel.Position
@@ -183,7 +183,7 @@ function Library:new(options)
 	end)
 
 	dragFrame.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			dragInput = input
 		end
 	end)
@@ -209,7 +209,7 @@ function Library:new(options)
 
 
 	local function closeMainFrameLabel()
-		MainFrameLabel:Destroy()
+		GUI["1"]:Destroy()
 	end
 
 	exitButton.MouseButton1Click:Connect(closeMainFrameLabel)
@@ -260,7 +260,7 @@ function Library:new(options)
 		GUI["d"]["BackgroundTransparency"] = 1;
 		GUI["d"]["Size"] = UDim2.new(0.16, 0, 1, 0);
 		GUI["d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-		GUI["d"]["Text"] = [[Version 1.45a]];
+		GUI["d"]["Text"] = [[Version 1.5a]];
 		GUI["d"]["Name"] = [[Version]];
 
 		-- StarterGui.Kaos.Main.BottomBar.User
@@ -322,7 +322,7 @@ function Library:new(options)
 		end
 		
 		local function ChangeVersion()
-			versionLabel.Text = "1.45a"
+			versionLabel.Text = "1.5a"
 			wait(1)
 		end
 
@@ -649,7 +649,7 @@ function Library:new(options)
 				uis.InputBegan:Connect(function(input, gpe)
 					if gpe then return end
 					
-					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch and Button.Hover then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 and Button.Hover then 
 						Button.MouseDown = true
 						Library:tween(Button["24"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
 						Library:tween(Button["24"], {BackgroundTransparency = 0.95})
@@ -662,7 +662,7 @@ function Library:new(options)
 				uis.InputEnded:Connect(function(input, gpe)
 					if gpe then return end
 
-					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then 
 						Button.MouseDown = false
 						
 						if Button.Hover then
@@ -894,7 +894,7 @@ function Library:new(options)
 		Toggle["4b"].InputBegan:Connect(function(input, gpe)
     if gpe then return end
 
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
         Toggle.MouseDown = true
         Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
         Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
@@ -906,7 +906,7 @@ end)
 		Toggle["4b"].InputEnded:Connect(function(input, gpe)
     if gpe then return end
 
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
         Toggle.MouseDown = false
 
         if Toggle.Hover then
