@@ -56,7 +56,7 @@ function Library:new(options)
 		GUI["2"]["BorderSizePixel"] = 0;
 		GUI["2"]["BackgroundColor3"] = Color3.fromRGB(3, 3, 3);
 		GUI["2"]["AnchorPoint"] = Vector2.new(0, 0);
-		GUI["2"]["Image"] = [[rbxassetid://17890000273]];
+		GUI["2"]["Image"] = [[rbxassetid://116681001847200]];
 		GUI["2"]["Size"] = UDim2.new(0, 650, 0, 400);
 		GUI["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 		GUI["2"]["Name"] = [[Main]];
