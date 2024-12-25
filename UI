@@ -260,7 +260,7 @@ function Library:new(options)
 		GUI["d"]["BackgroundTransparency"] = 1;
 		GUI["d"]["Size"] = UDim2.new(0.16, 0, 1, 0);
 		GUI["d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-		GUI["d"]["Text"] = [[Version 1.55a]];
+		GUI["d"]["Text"] = [[Version 1.56a]];
 		GUI["d"]["Name"] = [[Version]];
 
 		-- StarterGui.Kaos.Main.BottomBar.User
@@ -322,7 +322,7 @@ function Library:new(options)
 		end
 		
 		local function ChangeVersion()
-			versionLabel.Text = "1.55a"
+			versionLabel.Text = "1.56a"
 			wait(1)
 		end
 
@@ -816,7 +816,7 @@ function Library:new(options)
 				-- Checkmark UI
 				Toggle["50"] = Instance.new("Frame", Toggle["4b"])
 				Toggle["50"]["BorderSizePixel"] = 0
-				Toggle["50"]["BackgroundColor3"] = Color3.fromRGB(49, 49, 49)
+				Toggle["50"]["BackgroundColor3"] = Color3.fromRGB(17, 17, 17)
 				Toggle["50"]["AnchorPoint"] = Vector2.new(1, 0)
 				Toggle["50"]["Size"] = UDim2.new(0, 20, 0, 20)
 				Toggle["50"]["Position"] = UDim2.new(1, 0, 0, 0)
@@ -826,7 +826,7 @@ function Library:new(options)
 		
 				Toggle["52"] = Instance.new("UIStroke", Toggle["50"])
 				Toggle["52"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
-				Toggle["52"]["Color"] = Color3.fromRGB(82, 82, 82)
+				Toggle["52"]["Color"] = Color3.fromRGB(56, 56, 56)
 		
 				Toggle["53"] = Instance.new("ImageLabel", Toggle["50"])
 				Toggle["53"]["ImageTransparency"] = 1
@@ -843,10 +843,10 @@ function Library:new(options)
 				function Toggle:SetValue(state)
 					Toggle.State = state
 					if Toggle.State then
-						Library:tween(Toggle["50"], {BackgroundColor3 = Color3.fromRGB(49, 49, 49)})
+						Library:tween(Toggle["50"], {BackgroundColor3 = Color3.fromRGB(17, 17, 17)})
 						Library:tween(Toggle["53"], {ImageTransparency = 0})
 					else
-						Library:tween(Toggle["50"], {BackgroundColor3 = Color3.fromRGB(49, 49, 49)})
+						Library:tween(Toggle["50"], {BackgroundColor3 = Color3.fromRGB(17, 17, 17)})
 						Library:tween(Toggle["53"], {ImageTransparency = 1})
 					end
 					options.callback(Toggle.State)  -- Call the callback with the new state
