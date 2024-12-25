@@ -260,7 +260,7 @@ function Library:new(options)
 		GUI["d"]["BackgroundTransparency"] = 1;
 		GUI["d"]["Size"] = UDim2.new(0.16, 0, 1, 0);
 		GUI["d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-		GUI["d"]["Text"] = [[Version 1.56a]];
+		GUI["d"]["Text"] = [[Version 1.57a]];
 		GUI["d"]["Name"] = [[Version]];
 
 		-- StarterGui.Kaos.Main.BottomBar.User
@@ -322,7 +322,7 @@ function Library:new(options)
 		end
 		
 		local function ChangeVersion()
-			versionLabel.Text = "1.56a"
+			versionLabel.Text = "1.57a"
 			wait(1)
 		end
 
@@ -762,94 +762,108 @@ function Library:new(options)
 		end
 		function Tab:Toggle(options)
 			options = Library:validate({
+
 				title = "Test Toggle",
 				callback = function() end
+
 			}, options or {})
-		
+			
 			local Toggle = {
 				Hover = false,
 				MouseDown = false,
 				State = false
 			}
-		
+			
 			-- Render
 			do
-				-- Toggle container
-				Toggle["4b"] = Instance.new("Frame", Tab["20"])
-				Toggle["4b"]["BorderSizePixel"] = 0
-				Toggle["4b"]["BackgroundColor3"] = Color3.fromRGB(0, 201, 201)
-				Toggle["4b"]["Size"] = UDim2.new(0.972, 0, 0.01, 25)
-				Toggle["4b"]["Position"] = UDim2.new(0.01163, 0, 0.2, 0)
-				Toggle["4b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
-				Toggle["4b"]["Name"] = "ToggleInactive"
-				Toggle["4b"]["BackgroundTransparency"] = 0.95
-		
-				-- Title of the toggle
-				Toggle["4c"] = Instance.new("TextLabel", Toggle["4b"])
-				Toggle["4c"]["BorderSizePixel"] = 0
-				Toggle["4c"]["TextXAlignment"] = Enum.TextXAlignment.Left
-				Toggle["4c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
-				Toggle["4c"]["TextSize"] = 14
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive
+				Toggle["4b"] = Instance.new("Frame", Tab["20"]);
+				Toggle["4b"]["BorderSizePixel"] = 0;
+				Toggle["4b"]["BackgroundColor3"] = Color3.fromRGB(0, 201, 201);
+				Toggle["4b"]["Size"] = UDim2.new(0.972, 0, 0.01, 25);
+				Toggle["4b"]["Position"] = UDim2.new(0.01163, 0, 0.2, 0);
+				Toggle["4b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Toggle["4b"]["Name"] = [[ToggleInactive]];
+				Toggle["4b"]["BackgroundTransparency"] = 0.95;
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.Title
+				Toggle["4c"] = Instance.new("TextLabel", Toggle["4b"]);
+				Toggle["4c"]["BorderSizePixel"] = 0;
+				Toggle["4c"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+				Toggle["4c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+				Toggle["4c"]["TextSize"] = 14;
 				Toggle["4c"]["Font"] = Enum.Font.Arimo
-				Toggle["4c"]["FontFace"] = Font.new("rbxasset://fonts/families/Arimo.json", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
-				Toggle["4c"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
-				Toggle["4c"]["BackgroundTransparency"] = 1
-				Toggle["4c"]["Size"] = UDim2.new(0.988, -35, 1, 0)
-				Toggle["4c"]["Text"] = options.title
-				Toggle["4c"]["Position"] = UDim2.new(0.01218, 0, 0, 0)
-		
-				-- Padding for the toggle container
-				Toggle["4d"] = Instance.new("UIPadding", Toggle["4b"])
-				Toggle["4d"]["PaddingTop"] = UDim.new(0, 6)
-				Toggle["4d"]["PaddingRight"] = UDim.new(0, 6)
-				Toggle["4d"]["PaddingLeft"] = UDim.new(0, 6)
-				Toggle["4d"]["PaddingBottom"] = UDim.new(0, 6)
-		
-				-- Corner radius
-				Toggle["4e"] = Instance.new("UICorner", Toggle["4b"])
-				Toggle["4e"]["CornerRadius"] = UDim.new(0, 3)
-		
-				-- Stroke around the container
-				Toggle["4f"] = Instance.new("UIStroke", Toggle["4b"])
-				Toggle["4f"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
-				Toggle["4f"]["Color"] = Color3.fromRGB(0, 54, 57)
-		
-				-- Checkmark container
-				Toggle["50"] = Instance.new("Frame", Toggle["4b"])
-				Toggle["50"]["BorderSizePixel"] = 0
-				Toggle["50"]["BackgroundColor3"] = Color3.fromRGB(49, 49, 49)
-				Toggle["50"]["AnchorPoint"] = Vector2.new(1, 0)
-				Toggle["50"]["Size"] = UDim2.new(0, 20, 0, 20)
-				Toggle["50"]["Position"] = UDim2.new(1, 0, 0, 0)
-		
-				-- Corner for the checkmark
-				Toggle["51"] = Instance.new("UICorner", Toggle["50"])
-				Toggle["51"]["CornerRadius"] = UDim.new(0, 2)
-		
-				-- Stroke around the checkmark
-				Toggle["52"] = Instance.new("UIStroke", Toggle["50"])
-				Toggle["52"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
-				Toggle["52"]["Color"] = Color3.fromRGB(82, 82, 82)
-		
-				-- Checkmark image
-				Toggle["53"] = Instance.new("ImageLabel", Toggle["50"])
-				Toggle["53"]["ImageTransparency"] = 1
-				Toggle["53"]["ImageColor3"] = Color3.fromRGB(47, 255, 0)
-				Toggle["53"]["AnchorPoint"] = Vector2.new(0.5, 0.5)
-				Toggle["53"]["Image"] = "rbxassetid://18107037810"
-				Toggle["53"]["Size"] = UDim2.new(1, -2, 1, -2)
-				Toggle["53"]["Position"] = UDim2.new(0.5, 0, 0.5, 0)
+				Toggle["4c"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arimo.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal);
+				Toggle["4c"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+				Toggle["4c"]["BackgroundTransparency"] = 1;
+				Toggle["4c"]["Size"] = UDim2.new(0.988, -35, 1, 0);
+				Toggle["4c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Toggle["4c"]["Text"] = options.title;
+				Toggle["4c"]["Name"] = [[Title]];
+				Toggle["4c"]["Position"] = UDim2.new(0.01218, 0, 0, 0);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.UIPadding
+				Toggle["4d"] = Instance.new("UIPadding", Toggle["4b"]);
+				Toggle["4d"]["PaddingTop"] = UDim.new(0, 6);
+				Toggle["4d"]["PaddingRight"] = UDim.new(0, 6);
+				Toggle["4d"]["PaddingLeft"] = UDim.new(0, 6);
+				Toggle["4d"]["PaddingBottom"] = UDim.new(0, 6);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.UICorner
+				Toggle["4e"] = Instance.new("UICorner", Toggle["4b"]);
+				Toggle["4e"]["CornerRadius"] = UDim.new(0, 3);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.UIStroke
+				Toggle["4f"] = Instance.new("UIStroke", Toggle["4b"]);
+				Toggle["4f"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+				Toggle["4f"]["Color"] = Color3.fromRGB(0, 54, 57);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.CheckMarkHolder
+				Toggle["50"] = Instance.new("Frame", Toggle["4b"]);
+				Toggle["50"]["BorderSizePixel"] = 0;
+				Toggle["50"]["BackgroundColor3"] = Color3.fromRGB(49, 49, 49);
+				Toggle["50"]["AnchorPoint"] = Vector2.new(1, 0);
+				Toggle["50"]["Size"] = UDim2.new(0, 20, 0, 20);
+				Toggle["50"]["Position"] = UDim2.new(1, 0, 0, 0);
+				Toggle["50"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Toggle["50"]["Name"] = [[CheckMarkHolder]];
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.CheckMarkHolder.UICorner
+				Toggle["51"] = Instance.new("UICorner", Toggle["50"]);
+				Toggle["51"]["CornerRadius"] = UDim.new(0, 2);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.CheckMarkHolder.UIStroke
+				Toggle["52"] = Instance.new("UIStroke", Toggle["50"]);
+				Toggle["52"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+				Toggle["52"]["Color"] = Color3.fromRGB(82, 82, 82);
+
+				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.ToggleInactive.CheckMarkHolder.Checkmark
+				Toggle["53"] = Instance.new("ImageLabel", Toggle["50"]);
+				Toggle["53"]["BorderSizePixel"] = 0;
+				Toggle["53"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+				Toggle["53"]["ImageTransparency"] = 1;
+				Toggle["53"]["ImageColor3"] = Color3.fromRGB(47, 255, 0);
+				Toggle["53"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+				Toggle["53"]["Image"] = [[rbxassetid://18107037810]];
+				Toggle["53"]["Size"] = UDim2.new(1, -2, 1, -2);
+				Toggle["53"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+				Toggle["53"]["BackgroundTransparency"] = 1;
+				Toggle["53"]["Name"] = [[Checkmark]];
+				Toggle["53"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 			end
-		
+			
+			
 			-- Methods
+		
 			do
+				-- Methods
 				function Toggle:Toggle(b)
 					if b == nil then
 						Toggle.State = not Toggle.State
 					else
 						Toggle.State = b
 					end
-		
+			
 					if Toggle.State then
 						Library:tween(Toggle["50"], {BackgroundColor3 = Color3.fromRGB(49, 49, 49)})
 						Library:tween(Toggle["53"], {ImageTransparency = 0})
@@ -858,53 +872,67 @@ function Library:new(options)
 						Library:tween(Toggle["53"], {ImageTransparency = 1})
 					end
 					options.callback(Toggle.State)
+			
+					Toggle:SetValue(Toggle.State)
 				end
-			end
-		
-			-- Logic for hover and click
+			
+				-- Universal SetValue method to store settings in the config file
+				function Toggle:SetValue(state)
+					-- Assume the universal config is stored in a global table (Config)
+					Config[options.title] = state  -- Save based on title (unique to each toggle)
+					SaveConfig()  -- Save the updated configuration to the file
+				end
+			-- Logic
 			do
 				Toggle["4b"].MouseEnter:Connect(function()
 					Toggle.Hover = true
-					Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 150, 158)})
+
+					Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 150, 158)})			
 				end)
-		
+
 				Toggle["4b"].MouseLeave:Connect(function()
 					Toggle.Hover = false
+
 					if not Toggle.MouseDown then
 						Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
 					end
 				end)
-		
-				Toggle["4b"].InputBegan:Connect(function(input, gpe)
-					if gpe then return end
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then
-						Toggle.MouseDown = true
-						Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
-						Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
-						Toggle:Toggle()
-					end
-				end)
-		
-				Toggle["4b"].InputEnded:Connect(function(input, gpe)
-					if gpe then return end
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then
-						Toggle.MouseDown = false
-						if Toggle.Hover then
-							Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
-							Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 150, 158)})
-						else
-							Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
-							Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
-						end
-					end
-				end)
+
+		Toggle["4b"].InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        Toggle.MouseDown = true
+        Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+        Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
+
+        Toggle:Toggle() 
+    end
+end)
+
+		Toggle["4b"].InputEnded:Connect(function(input, gpe)
+    if gpe then return end
+
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        Toggle.MouseDown = false
+
+        if Toggle.Hover then
+            Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+            Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 150, 158)})
+        else
+            Library:tween(Toggle["4b"], {BackgroundColor3 = Color3.fromRGB(0, 201, 201)})
+            Library:tween(Toggle["4f"], {Color = Color3.fromRGB(0, 54, 57)})
+        end
+    end
+end)
+
 			end
-		
+			end
+			
+			
+			
 			return Toggle
-		end
-		
-		
-	
+	end
 	
 	function Tab:Slider(options)
 			options = Library:validate({
