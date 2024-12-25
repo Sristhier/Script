@@ -760,7 +760,6 @@ function Library:new(options)
 			Label:_update()
 			return Label
 		end
-	
 		function Tab:Toggle(options)
 			options = Library:validate({
 				title = "Test Toggle",
@@ -775,14 +774,14 @@ function Library:new(options)
 		
 			-- Render
 			do
-				-- Create the UI elements as before
+				-- Toggle container
 				Toggle["4b"] = Instance.new("Frame", Tab["20"])
 				Toggle["4b"]["BorderSizePixel"] = 0
 				Toggle["4b"]["BackgroundColor3"] = Color3.fromRGB(0, 201, 201)
 				Toggle["4b"]["Size"] = UDim2.new(0.972, 0, 0.01, 25)
 				Toggle["4b"]["Position"] = UDim2.new(0.01163, 0, 0.2, 0)
 				Toggle["4b"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
-				Toggle["4b"]["Name"] = [[ToggleInactive]]
+				Toggle["4b"]["Name"] = "ToggleInactive"
 				Toggle["4b"]["BackgroundTransparency"] = 0.95
 		
 				-- Title of the toggle
@@ -792,67 +791,58 @@ function Library:new(options)
 				Toggle["4c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
 				Toggle["4c"]["TextSize"] = 14
 				Toggle["4c"]["Font"] = Enum.Font.Arimo
-				Toggle["4c"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arimo.json]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
+				Toggle["4c"]["FontFace"] = Font.new("rbxasset://fonts/families/Arimo.json", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
 				Toggle["4c"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
 				Toggle["4c"]["BackgroundTransparency"] = 1
 				Toggle["4c"]["Size"] = UDim2.new(0.988, -35, 1, 0)
 				Toggle["4c"]["Text"] = options.title
 				Toggle["4c"]["Position"] = UDim2.new(0.01218, 0, 0, 0)
 		
-				-- Padding and other UI elements
+				-- Padding for the toggle container
 				Toggle["4d"] = Instance.new("UIPadding", Toggle["4b"])
 				Toggle["4d"]["PaddingTop"] = UDim.new(0, 6)
 				Toggle["4d"]["PaddingRight"] = UDim.new(0, 6)
 				Toggle["4d"]["PaddingLeft"] = UDim.new(0, 6)
 				Toggle["4d"]["PaddingBottom"] = UDim.new(0, 6)
 		
+				-- Corner radius
 				Toggle["4e"] = Instance.new("UICorner", Toggle["4b"])
 				Toggle["4e"]["CornerRadius"] = UDim.new(0, 3)
 		
+				-- Stroke around the container
 				Toggle["4f"] = Instance.new("UIStroke", Toggle["4b"])
 				Toggle["4f"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
 				Toggle["4f"]["Color"] = Color3.fromRGB(0, 54, 57)
 		
-				-- Checkmark UI
+				-- Checkmark container
 				Toggle["50"] = Instance.new("Frame", Toggle["4b"])
 				Toggle["50"]["BorderSizePixel"] = 0
-				Toggle["50"]["BackgroundColor3"] = Color3.fromRGB(17, 17, 17)
+				Toggle["50"]["BackgroundColor3"] = Color3.fromRGB(49, 49, 49)
 				Toggle["50"]["AnchorPoint"] = Vector2.new(1, 0)
 				Toggle["50"]["Size"] = UDim2.new(0, 20, 0, 20)
 				Toggle["50"]["Position"] = UDim2.new(1, 0, 0, 0)
 		
+				-- Corner for the checkmark
 				Toggle["51"] = Instance.new("UICorner", Toggle["50"])
 				Toggle["51"]["CornerRadius"] = UDim.new(0, 2)
 		
+				-- Stroke around the checkmark
 				Toggle["52"] = Instance.new("UIStroke", Toggle["50"])
 				Toggle["52"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border
-				Toggle["52"]["Color"] = Color3.fromRGB(56, 56, 56)
+				Toggle["52"]["Color"] = Color3.fromRGB(82, 82, 82)
 		
+				-- Checkmark image
 				Toggle["53"] = Instance.new("ImageLabel", Toggle["50"])
 				Toggle["53"]["ImageTransparency"] = 1
 				Toggle["53"]["ImageColor3"] = Color3.fromRGB(47, 255, 0)
 				Toggle["53"]["AnchorPoint"] = Vector2.new(0.5, 0.5)
-				Toggle["53"]["Image"] = [[rbxassetid://18107037810]]
+				Toggle["53"]["Image"] = "rbxassetid://18107037810"
 				Toggle["53"]["Size"] = UDim2.new(1, -2, 1, -2)
 				Toggle["53"]["Position"] = UDim2.new(0.5, 0, 0.5, 0)
 			end
 		
 			-- Methods
 			do
-				-- Set the value of the toggle and update the UI
-				function Toggle:SetValue(state)
-					Toggle.State = state
-					if Toggle.State then
-						Library:tween(Toggle["50"], {BackgroundColor3 = Color3.fromRGB(17, 17, 17)})
-						Library:tween(Toggle["53"], {ImageTransparency = 0})
-					else
-						Library:tween(Toggle["50"], {BackgroundColor3 = Color3.fromRGB(17, 17, 17)})
-						Library:tween(Toggle["53"], {ImageTransparency = 1})
-					end
-					options.callback(Toggle.State)  -- Call the callback with the new state
-				end
-		
-				-- Toggle the state on click
 				function Toggle:Toggle(b)
 					if b == nil then
 						Toggle.State = not Toggle.State
@@ -860,11 +850,18 @@ function Library:new(options)
 						Toggle.State = b
 					end
 		
-					Toggle:SetValue(Toggle.State)
+					if Toggle.State then
+						Library:tween(Toggle["50"], {BackgroundColor3 = Color3.fromRGB(49, 49, 49)})
+						Library:tween(Toggle["53"], {ImageTransparency = 0})
+					else
+						Library:tween(Toggle["50"], {BackgroundColor3 = Color3.fromRGB(49, 49, 49)})
+						Library:tween(Toggle["53"], {ImageTransparency = 1})
+					end
+					options.callback(Toggle.State)
 				end
 			end
 		
-			-- Logic for hover, click, etc.
+			-- Logic for hover and click
 			do
 				Toggle["4b"].MouseEnter:Connect(function()
 					Toggle.Hover = true
@@ -905,6 +902,7 @@ function Library:new(options)
 		
 			return Toggle
 		end
+		
 		
 	
 	
