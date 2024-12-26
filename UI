@@ -876,11 +876,9 @@ function Library:new(options)
 					Toggle:SetValue(Toggle.State)
 				end
 			
-				-- Universal SetValue method to store settings in the config file
 				function Toggle:SetValue(state)
-					-- Assume the universal config is stored in a global table (Config)
-					Config[options.title] = state  -- Save based on title (unique to each toggle)
-					SaveConfig()  -- Save the updated configuration to the file
+					Config[options.title] = state  
+					SaveConfig() 
 				end
 			-- Logic
 			do
@@ -927,7 +925,7 @@ end)
 end)
 
 			end
-			end
+		end
 			
 			
 			
@@ -1308,12 +1306,10 @@ end)
 			end
 
 			function Dropdown:SetValue(value)
-				-- Loop through the items in the dropdown to find the matching value
 				for id, item in pairs(Dropdown.Items) do
 					if item.value == value then
-						-- Highlight the selected item by changing its background color or text style
 						Library:tween(Dropdown.Items[id].instance["42"], {BackgroundColor3 = Color3.fromRGB(0, 150, 158)})
-						Dropdown.callback(value)  -- Call the dropdown's callback with the selected value
+						Dropdown.callback(value) 
 						break
 					end
 				end
