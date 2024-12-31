@@ -1145,7 +1145,7 @@ end)
         -- Render
         do
             -- Create the main Dropdown frame (button) to be clicked
-            Dropdown["3a"] = Instance.new("Frame", ParentContainer) -- Assuming ParentContainer is your parent frame
+            Dropdown["3a"] = Instance.new("Frame", Tab["20"]) -- Assuming ParentContainer is your parent frame
             Dropdown["3a"].BackgroundColor3 = Color3.fromRGB(0, 0, 0)
             Dropdown["3a"].Size = UDim2.new(0.972, 0, 0, 35) -- Minimal size for the dropdown
             Dropdown["3a"].Position = UDim2.new(0.01163, 0, 0.2, 0) -- Position it correctly
