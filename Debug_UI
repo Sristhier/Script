@@ -1150,7 +1150,9 @@ end)
 				Dropdown["3a"].BackgroundColor3 = Color3.fromRGB(0, 201, 201)
 				Dropdown["3a"].ClipsDescendants = true
 				Dropdown["3a"].Size = UDim2.new(0.972, 0, 0.01, 30)
-				Dropdown["3a"].Position = UDim2.new(0.01163, 0, 0.2, 0)
+				-- Inside the Toggle method, when opening the dropdown:
+Dropdown["3a"].Position = UDim2.new(0.01163, 0, 0.2, 0)  -- Ensure this doesn't change unexpectedly
+
 				Dropdown["3a"].BorderColor3 = Color3.fromRGB(0, 0, 0)
 				Dropdown["3a"].Name = [[Dropdown]]
 				Dropdown["3a"].BackgroundTransparency = 0.95
@@ -1169,7 +1171,7 @@ end)
 				Dropdown["3b"].BorderColor3 = Color3.fromRGB(0, 0, 0)
 				Dropdown["3b"].Text = options.title
 				Dropdown["3b"].Name = [[Title]]
-				Dropdown["3b"].Position = UDim2.new(0.01218, 0, 0, 6) 
+				Dropdown["3b"].Position = UDim2.new(0.01218, 0, -0.25725, 0)
 				Dropdown["3b"]["TextWrapped"] = true;
 
 				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.UIPadding
@@ -1189,7 +1191,9 @@ end)
 				Dropdown["3d"].BorderColor3 = Color3.fromRGB(0, 0, 0)
 				Dropdown["3d"].BackgroundTransparency = 1
 				Dropdown["3d"].Name = [[Icon]]
-				Dropdown["3d"].Position = UDim2.new(1, 0, -0.03628, 0)
+				-- Inside the Render section:
+Dropdown["3b"].Position = UDim2.new(0.01218, 0, 0, 0)  -- Adjusted the Y position to keep it stable
+
 
 				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.UICorner
 				Dropdown["3e"] = Instance.new("UICorner", Dropdown["3a"])
@@ -1328,6 +1332,7 @@ end)
 
 			function Dropdown:toggle()
 				if Dropdown.Open then
+					-- When closing, restore the original size
 					Library:tween(Dropdown["3a"], {Size = UDim2.new(0.972, 0, 0, 35)}, function()
 						Dropdown["40"].Visible = false
 					end)
@@ -1338,12 +1343,17 @@ end)
 							count += 1
 						end
 					end
-
+			
+					-- Ensure the dropdown expands below the title, and adjust its position to maintain space
 					Dropdown["40"].Visible = true
-					Library:tween(Dropdown["3a"], {Size = UDim2.new(0.972, 0, 0, 30 + (count * 24) + 1)})
+					Library:tween(Dropdown["3a"], {Size = UDim2.new(0.972, 0, 0, 30 + (count * 24) + 1)}, function()
+						-- Adjust position of the dropdown container to avoid excessive upward shift
+						Dropdown["3a"].Position = UDim2.new(0.01163, 0, 0.2, 0)  -- Adjust as necessary
+					end)
 				end
 				Dropdown.Open = not Dropdown.Open
 			end
+			
 
 			-- Logic
 			do
