@@ -256,7 +256,7 @@ function Library:new(options)
 		GUI["d"]["BackgroundTransparency"] = 1;
 		GUI["d"]["Size"] = UDim2.new(0.16, 0, 1, 0);
 		GUI["d"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-		GUI["d"]["Text"] = [[Version 1.58a]];
+		GUI["d"]["Text"] = [[Version 1.59a]];
 		GUI["d"]["Name"] = [[Version]];
 
 		-- StarterGui.Kaos.Main.BottomBar.User
@@ -318,7 +318,7 @@ function Library:new(options)
 		end
 		
 		local function ChangeVersion()
-			versionLabel.Text = "1.58a"
+			versionLabel.Text = "1.59a"
 			task.wait(1)
 		end
 
@@ -1144,16 +1144,19 @@ end)
 
 			-- Render
 			do
-				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown
-				Dropdown["3a"] = Instance.new("Frame", Tab["20"])
-				Dropdown["3a"].BorderSizePixel = 0
-				Dropdown["3a"].BackgroundColor3 = Color3.fromRGB(0, 201, 201)
-				Dropdown["3a"].ClipsDescendants = true
-				Dropdown["3a"].Size = UDim2.new(0.972, 0, 0.01, 30)
-				Dropdown["3a"].Position = UDim2.new(0.01163, 0, 0.2, 0)
-				Dropdown["3a"].BorderColor3 = Color3.fromRGB(0, 0, 0)
-				Dropdown["3a"].Name = [[Dropdown]]
-				Dropdown["3a"].BackgroundTransparency = 0.95
+	-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.OptionHolder (make it a ScrollingFrame)
+Dropdown["40"] = Instance.new("ScrollingFrame", Dropdown["3a"])
+Dropdown["40"].Visible = false
+Dropdown["40"].BorderSizePixel = 0
+Dropdown["40"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Dropdown["40"].Size = UDim2.new(1, 0, 0, 100)  -- Start with a fixed height
+Dropdown["40"].Position = UDim2.new(0, 0, 0, 26)
+Dropdown["40"].BorderColor3 = Color3.fromRGB(0, 0, 0)
+Dropdown["40"].Name = [[OptionHolder]]
+Dropdown["40"].BackgroundTransparency = 1
+Dropdown["40"].ScrollingEnabled = true  -- Allow scrolling
+Dropdown["40"].CanvasSize = UDim2.new(0, 0, 0, 0)  -- Will be dynamically adjusted later
+
 
 				-- StarterGui.Kaos.Main.ContentContainer.HomeTab.Dropdown.Title
 				Dropdown["3b"] = Instance.new("TextLabel", Dropdown["3a"])
@@ -1327,23 +1330,33 @@ end)
 			end
 
 			function Dropdown:toggle()
-				if Dropdown.Open then
-					Library:tween(Dropdown["3a"], {Size = UDim2.new(0.972, 0, 0, 35)}, function()
-						Dropdown["40"].Visible = false
-					end)
-				else
-					local count = 0
-					for _, v in pairs(Dropdown.Items) do
-						if v ~= nil then
-							count += 1
-						end
-					end
-
-					Dropdown["40"].Visible = true
-					Library:tween(Dropdown["3a"], {Size = UDim2.new(0.972, 0, 0, 30 + (count * 24) + 1)})
-				end
-				Dropdown.Open = not Dropdown.Open
-			end
+                if Dropdown.Open then
+                    -- When closing, restore the original size
+                    Library:tween(Dropdown["3a"], {Size = UDim2.new(0.972, 0, 0, 35)}, function()
+                        Dropdown["40"].Visible = false
+                    end)
+                else
+                    local count = 0
+                    for _, v in pairs(Dropdown.Items) do
+                        if v ~= nil then
+                            count += 1
+                        end
+                    end
+            
+                    -- Calculate total height and allow scrolling if there are too many items
+                    local itemHeight = 24  -- Height of each item
+                    local totalHeight = 30 + (count * itemHeight)  -- Total height of dropdown content
+                    Dropdown["40"].CanvasSize = UDim2.new(0, 0, 0, totalHeight)  -- Adjust canvas size based on the items
+            
+                    Dropdown["40"].Visible = true
+                    Library:tween(Dropdown["3a"], {Size = UDim2.new(0.972, 0, 0, 30 + itemHeight)}, function()
+                        -- Keep the title fixed at the top
+                        Dropdown["3a"].Position = UDim2.new(0.01163, 0, 0.2, 0)
+                    end)
+                end
+                Dropdown.Open = not Dropdown.Open
+            end
+            
 
 			-- Logic
 			do
