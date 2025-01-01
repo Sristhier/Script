@@ -1706,6 +1706,15 @@ end)
 		print("trying to run function")
 		
 		local SearchBar = Search["83"]
+
+		-- Optional: Ensure placeholder text is cleared when typing
+		Search["83"]["PlaceholderText"]:GetPropertyChangedSignal("Text"):Connect(function()
+    if Search["83"]["PlaceholderText"].Text ~= "" then
+        Search["83"]["PlaceholderText"].PlaceholderText = "" -- Clear placeholder when typing
+    else
+        Search["83"]["PlaceholderText"].PlaceholderText = "Search..." -- Restore placeholder when empty
+    end
+end)
 		
 		local function UpdateElements()
 			-- Ensure there's a valid tab before proceeding
@@ -1714,6 +1723,9 @@ end)
 			-- Retrieve the container holding items in the current tab
 			local items = GUI.CurrentTab["20"]
 			local search = string.lower(SearchBar.Text)
+		
+			-- Flag to track visibility changes
+			local elementsUpdated = false
 		
 			-- Iterate over all descendants of the items container
 			for _, v in pairs(items:GetDescendants()) do
@@ -1728,12 +1740,22 @@ end)
 		
 					-- Set visibility based on whether the search term matches
 					if search == "" then
-						-- Show all items if the search bar is empty
 						pFrame.Visible = true
 					else
-						-- Only show items that match the search term
 						pFrame.Visible = containing ~= nil
 					end
+		
+					-- Flag the update
+					elementsUpdated = true
+				end
+			end
+
+		
+			-- Force a refresh of the UI
+			if elementsUpdated then
+				items:ClearAllChildren() -- Clear and re-parent children to force UI refresh
+				for _, v in pairs(items:GetChildren()) do
+					v.Parent = items
 				end
 			end
 		end
@@ -1741,7 +1763,9 @@ end)
 		-- Connect the function to the Text property change event
 		SearchBar:GetPropertyChangedSignal("Text"):Connect(UpdateElements)
 		
+		-- Optionally, call UpdateElements initially to ensure all elements are visible
 		UpdateElements()
+		
 		
 
 		
