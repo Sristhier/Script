@@ -1677,7 +1677,7 @@ end)
 			Search["83"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
 			Search["83"]["BorderSizePixel"] = 0
 			Search["83"]["Name"] = [[Search]]
-			Search["83"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31)
+			Search["83"]["BackgroundColor3"] = Color3.fromRGB(39, 39, 39)
 			Search["83"]["Selectable"] = false
 			Search["83"]["Size"] = UDim2.new(0.25457, 0, 0.0475, 0)
 			Search["83"]["Position"] = UDim2.new(0.71231, 0, 0.115, 0)
@@ -1707,55 +1707,40 @@ end)
 		
 		local SearchBar = Search["83"]
 
-		local SearchBar = Search["83"]
-
-		-- Optional: Ensure placeholder text is cleared when typing
 SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
     if SearchBar.Text ~= "" then
-        SearchBar.PlaceholderText = "" -- Clear placeholder when typing
+        SearchBar.PlaceholderText = "" 
     else
-        SearchBar.PlaceholderText = "Search..." -- Restore placeholder when empty
+        SearchBar.PlaceholderText = "Search..." 
     end
 end)
 		
 		local function UpdateElements()
-			-- Ensure there's a valid tab before proceeding
 			if not GUI.CurrentTab then return end
 		
-			-- Retrieve the container holding items in the current tab
 			local items = GUI.CurrentTab["20"]
 			local search = string.lower(SearchBar.Text)
 		
-			-- Iterate over all descendants of the items container
 			for _, v in pairs(items:GetDescendants()) do
-				-- Check if the descendant is a TextLabel
 				if v:IsA("TextLabel") then
-					local pFrame = v.Parent -- Get the parent frame of the TextLabel
+					local pFrame = v.Parent 
 					local contents = string.lower(v.Text)
 		
-					-- Use pattern matching to find whole words
 					local searchPattern = "%f[%w]" .. search .. "%f[%W]"
 					local containing = contents:match(searchPattern)
 		
-					-- Set visibility based on whether the search term matches
 					if search == "" then
-						-- Show all items if the search bar is empty
 						pFrame.Visible = true
 					else
-						-- Only show items that match the search term
 						pFrame.Visible = containing ~= nil
 					end
 				end
 			end
 		end
 		
-		-- Connect the function to the Text property change event
 		SearchBar:GetPropertyChangedSignal("Text"):Connect(UpdateElements)
 		
 		UpdateElements()
-		
-
-		
 
 
 	return Tab
