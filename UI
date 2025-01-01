@@ -267,7 +267,7 @@ function Library:new(options)
 		GUI["e"]["TextYAlignment"] = Enum.TextYAlignment.Top;
 		GUI["e"]["TextScaled"] = true;
 		GUI["e"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-		GUI["e"]["TextSize"] = 17;
+		GUI["e"]["TextSize"] = 15;
 		GUI["e"]["FontFace"] = Font.new([[rbxassetid://12187365977]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
 		GUI["e"]["TextColor3"] = Color3.fromRGB(127, 127, 127);
 		GUI["e"]["BackgroundTransparency"] = 1;
@@ -1684,15 +1684,12 @@ end)
 			Search["83"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
 			Search["83"]["Text"] = [[]]
 			Search["83"]["BackgroundTransparency"] = 0.5
-			Search["83"]["PlaceholderText"] = "Search..." -- Add placeholder text for better UX
+			Search["83"]["PlaceholderText"] = "Search.." -- Add placeholder text for better UX
+			Search["83"]["TextWrapped"] = true
 		
 			-- StarterGui.Kaos.Main.Search.UICorner
 			Search["84"] = Instance.new("UICorner", Search["83"])
 			Search["84"]["CornerRadius"] = UDim.new(0, 5)
-		
-			-- StarterGui.Kaos.Main.Search.UIStroke
-			Search["85"] = Instance.new("UIStroke", Search["83"])
-			Search["85"]["Color"] = Color3.fromRGB(36, 36, 36)
 		
 			-- Add Search Icon
 			Search["86"] = Instance.new("ImageLabel", Search["83"])
