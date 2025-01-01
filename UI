@@ -1708,25 +1708,42 @@ end)
 		local SearchBar = Search["83"]
 		
 		local function UpdateElements()
+			-- Ensure there's a valid tab before proceeding
 			if not GUI.CurrentTab then return end
+		
+			-- Retrieve the container holding items in the current tab
 			local items = GUI.CurrentTab["20"]
 			local search = string.lower(SearchBar.Text)
-			
+		
+			-- Iterate over all descendants of the items container
 			for _, v in pairs(items:GetDescendants()) do
-				if not v:IsA("TextLabel") then continue end
+				-- Check if the descendant is a TextLabel
+				if v:IsA("TextLabel") then
+					local pFrame = v.Parent -- Get the parent frame of the TextLabel
+					local contents = string.lower(v.Text)
 		
-				local pFrame = v.Parent
-				local contents = string.lower(v.Text)
+					-- Use pattern matching to find whole words
+					local searchPattern = "%f[%w]" .. search .. "%f[%W]"
+					local containing = contents:match(searchPattern)
 		
-				-- Use pattern matching to check for entire words
-				local searchPattern = "%f[%w]" .. search .. "%f[%W]" -- Matches whole words only
-				local containing = contents:match(searchPattern)
-		
-				pFrame.Visible = containing ~= nil
+					-- Set visibility based on whether the search term matches
+					if search == "" then
+						-- Show all items if the search bar is empty
+						pFrame.Visible = true
+					else
+						-- Only show items that match the search term
+						pFrame.Visible = containing ~= nil
+					end
+				end
 			end
 		end
 		
+		-- Connect the function to the Text property change event
 		SearchBar:GetPropertyChangedSignal("Text"):Connect(UpdateElements)
+		
+		UpdateElements()
+		
+
 		
 
 
