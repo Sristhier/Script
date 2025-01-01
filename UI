@@ -1684,20 +1684,19 @@ end)
 			Search["83"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
 			Search["83"]["Text"] = [[]]
 			Search["83"]["BackgroundTransparency"] = 0.5
-			Search["83"]["PlaceholderText"] = "Search.." -- Add placeholder text for better UX
+			Search["83"]["PlaceholderText"] = "Search.." 
 			Search["83"]["TextWrapped"] = true
 		
 			-- StarterGui.Kaos.Main.Search.UICorner
 			Search["84"] = Instance.new("UICorner", Search["83"])
 			Search["84"]["CornerRadius"] = UDim.new(0, 5)
 		
-			-- Add Search Icon
 			Search["86"] = Instance.new("ImageLabel", Search["83"])
 			Search["86"]["Name"] = [[SearchIcon]]
-			Search["86"]["Image"] = "rbxassetid://99553859995082" -- Replace with your icon's asset ID
+			Search["86"]["Image"] = "rbxassetid://99553859995082" 
 			Search["86"]["BackgroundTransparency"] = 1
-			Search["86"]["Size"] = UDim2.new(0, 14, 0, 14) -- Adjust size as needed
-			Search["86"]["Position"] = UDim2.new(0, 5, 0.5, -8) -- Position it to the left, centered vertically
+			Search["86"]["Size"] = UDim2.new(0, 14, 0, 14) 
+			Search["86"]["Position"] = UDim2.new(0, 5, 0.5, -8) 
 		end
 		
 		print("trying to run function")
