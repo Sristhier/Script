@@ -1668,6 +1668,9 @@ end)
 		local Search = {}
 
 -- Render 
+local Search = {}
+
+-- Render 
 do
     -- Search Frame
     Search["83"] = Instance.new("TextBox", GUI["2"])
@@ -1681,7 +1684,7 @@ do
     Search["83"].Position = UDim2.new(0.71231, 0, 0.115, 0)
     Search["83"].BorderColor3 = Color3.fromRGB(0, 0, 0)
     Search["83"].Text = ""
-    Search["83"].PlaceholderText = "Search..." -- Add placeholder text for better UX
+    Search["83"].PlaceholderText = "Search..." -- Placeholder for better UX
     Search["83"].BackgroundTransparency = 0.5
 
     -- Rounded corners
@@ -1694,10 +1697,10 @@ do
 
     -- Search Icon
     Search["86"] = Instance.new("ImageLabel", Search["83"])
-    Search["86"].Size = UDim2.new(0, 20, 0, 20)
-    Search["86"].Position = UDim2.new(0, 5, 0.5, -10) -- Adjust to align icon to the left
+    Search["86"].Size = UDim2.new(0, 16, 0, 16) -- Smaller size for the icon
+    Search["86"].Position = UDim2.new(0, 5, 0.5, -8) -- Adjusted position for the smaller size
     Search["86"].BackgroundTransparency = 1
-    Search["86"].Image = "rbxassetid://99553859995082" -- Replace with your search icon asset ID
+    Search["86"].Image = "rbxassetid://YOUR_SEARCH_ICON_ASSET_ID" -- Replace with your search icon asset ID
 end
 
 print("trying to run function")
@@ -1715,12 +1718,26 @@ local function UpdateElements()
         local pFrame = v.Parent
         local contents = string.lower(v.Text)
 
-        -- Check if the search term is a substring
-        pFrame.Visible = search == "" or contents:find(search, 1, true) ~= nil
+        -- Match substring correctly
+        if search == "" or contents:find(search, 1, true) then
+            pFrame.Visible = true
+        else
+            pFrame.Visible = false
+        end
     end
 end
 
-SearchBar:GetPropertyChangedSignal("Text"):Connect(UpdateElements)
+SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
+    UpdateElements()
+
+    -- Hide the placeholder when text is typed
+    if SearchBar.Text == "" then
+        SearchBar.PlaceholderText = "Search..."
+    else
+        SearchBar.PlaceholderText = "" -- Clear placeholder when text is present
+    end
+end)
+
 
 
 	return Tab
