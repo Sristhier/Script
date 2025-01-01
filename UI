@@ -267,7 +267,7 @@ function Library:new(options)
 		GUI["e"]["TextYAlignment"] = Enum.TextYAlignment.Top;
 		GUI["e"]["TextScaled"] = true;
 		GUI["e"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-		GUI["e"]["TextSize"] = 20;
+		GUI["e"]["TextSize"] = 17;
 		GUI["e"]["FontFace"] = Font.new([[rbxassetid://12187365977]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
 		GUI["e"]["TextColor3"] = Color3.fromRGB(127, 127, 127);
 		GUI["e"]["BackgroundTransparency"] = 1;
