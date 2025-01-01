@@ -1677,7 +1677,7 @@ end)
 			Search["83"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
 			Search["83"]["BorderSizePixel"] = 0
 			Search["83"]["Name"] = [[Search]]
-			Search["83"]["BackgroundColor3"] = Color3.fromRGB(34, 34, 34)
+			Search["83"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31)
 			Search["83"]["Selectable"] = false
 			Search["83"]["Size"] = UDim2.new(0.25457, 0, 0.0475, 0)
 			Search["83"]["Position"] = UDim2.new(0.71231, 0, 0.115, 0)
@@ -1692,7 +1692,7 @@ end)
 		
 			-- StarterGui.Kaos.Main.Search.UIStroke
 			Search["85"] = Instance.new("UIStroke", Search["83"])
-			Search["85"]["Color"] = Color3.fromRGB(21, 21, 21)
+			Search["85"]["Color"] = Color3.fromRGB(36, 36, 36)
 		
 			-- Add Search Icon
 			Search["86"] = Instance.new("ImageLabel", Search["83"])
