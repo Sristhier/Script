@@ -1667,52 +1667,61 @@ end)
 
 		local Search = {}
 
-		-- Render 
-		do
-			-- StarterGui.Kaos.Main.Search
-			Search["83"] = Instance.new("TextBox", GUI["2"])
-			Search["83"]["Active"] = false
-			Search["83"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
-			Search["83"]["BorderSizePixel"] = 0
-			Search["83"]["Name"] = [[Search]]
-			Search["83"]["BackgroundColor3"] = Color3.fromRGB(63, 63, 63)
-			Search["83"]["Selectable"] = false
-			Search["83"]["Size"] = UDim2.new(0.25457, 0, 0.0475, 0)
-			Search["83"]["Position"] = UDim2.new(0.71231, 0, 0.115, 0)
-			Search["83"]["BorderColor3"] = Color3.fromRGB(0, 0, 0)
-			Search["83"]["Text"] = [[]]
-			Search["83"]["BackgroundTransparency"] = 0.5
+-- Render 
+do
+    -- Search Frame
+    Search["83"] = Instance.new("TextBox", GUI["2"])
+    Search["83"].Active = false
+    Search["83"].TextColor3 = Color3.fromRGB(255, 255, 255)
+    Search["83"].BorderSizePixel = 0
+    Search["83"].Name = "Search"
+    Search["83"].BackgroundColor3 = Color3.fromRGB(34, 34, 34)
+    Search["83"].Selectable = false
+    Search["83"].Size = UDim2.new(0.25457, 0, 0.0475, 0)
+    Search["83"].Position = UDim2.new(0.71231, 0, 0.115, 0)
+    Search["83"].BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Search["83"].Text = ""
+    Search["83"].PlaceholderText = "Search..." -- Add placeholder text for better UX
+    Search["83"].BackgroundTransparency = 0.5
 
-			-- StarterGui.Kaos.Main.Search.UICorner
-			Search["84"] = Instance.new("UICorner", Search["83"])
-			Search["84"]["CornerRadius"] = UDim.new(0, 5)
+    -- Rounded corners
+    Search["84"] = Instance.new("UICorner", Search["83"])
+    Search["84"].CornerRadius = UDim.new(0, 5)
 
-			-- StarterGui.Kaos.Main.Search.UIStroke
-			Search["85"] = Instance.new("UIStroke", Search["83"])
-			Search["85"]["Color"] = Color3.fromRGB(21, 21, 21)
-		end
+    -- Stroke around the search bar
+    Search["85"] = Instance.new("UIStroke", Search["83"])
+    Search["85"].Color = Color3.fromRGB(21, 21, 21)
 
-		print("trying to run function")
+    -- Search Icon
+    Search["86"] = Instance.new("ImageLabel", Search["83"])
+    Search["86"].Size = UDim2.new(0, 20, 0, 20)
+    Search["86"].Position = UDim2.new(0, 5, 0.5, -10) -- Adjust to align icon to the left
+    Search["86"].BackgroundTransparency = 1
+    Search["86"].Image = "rbxassetid://99553859995082" -- Replace with your search icon asset ID
+end
 
-		local SearchBar = Search["83"]
+print("trying to run function")
 
-		local function UpdateElements()
-			if not GUI.CurrentTab then return end
-			local items = GUI.CurrentTab["20"]
-			local search = string.lower(SearchBar.Text)
-			for i, v in pairs(items:GetDescendants()) do
-				if not v:IsA("TextLabel") then continue end
+local SearchBar = Search["83"]
 
-				local pFrame = v.Parent
-				local contents = string.lower(v.Text)
-				local containing = contents:match(search)
+local function UpdateElements()
+    if not GUI.CurrentTab then return end
+    local items = GUI.CurrentTab["20"]
+    local search = string.lower(SearchBar.Text)
 
-				pFrame.Visible = containing ~= nil
-			end
-		end
+    for _, v in pairs(items:GetDescendants()) do
+        if not v:IsA("TextLabel") then continue end
 
-		SearchBar:GetPropertyChangedSignal("Text"):Connect(UpdateElements)
- 
+        local pFrame = v.Parent
+        local contents = string.lower(v.Text)
+
+        -- Check if the search term is a substring
+        pFrame.Visible = search == "" or contents:find(search, 1, true) ~= nil
+    end
+end
+
+SearchBar:GetPropertyChangedSignal("Text"):Connect(UpdateElements)
+
 
 	return Tab
 	end 
