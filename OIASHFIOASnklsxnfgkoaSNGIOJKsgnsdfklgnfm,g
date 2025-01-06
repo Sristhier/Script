@@ -1,0 +1,1146 @@
+-- Lunal UI // Setup
+
+local Setup = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/8T1LiYuMh96vrfvMfqAvlPbi4dR2Hhx8yzE16dG/vVoZlsyDgeOvBT90QbnXoFDQ/main/HsUTSb1JpEQZ"))();
+local InputService = Setup:InputRecorder();
+Setup:Basics()
+
+
+local RGB = Color3.fromRGB;
+local Library = {
+    Cache = {},
+    Tabs = {},
+
+    Toggles = {},
+    Binds = {},
+
+    Theme = "Default",
+    Themes = {
+        ["Default"] = {
+            ["Background"] = RGB(2, 2, 2),
+            ["Background2"] = RGB(10, 10, 10),
+            ["Background3"] = RGB(8, 8, 8),
+
+            ["Accent1"] = RGB(120, 0, 120),
+            ["Accent2"] = RGB(20, 0, 20),
+
+            ["Tone"] = RGB(20, 20, 20),
+
+            ["Text"] = RGB(255, 255, 255),
+            ["Text2"] = RGB(65, 65, 65),
+            ["Icons"] = RGB(255, 255, 255),
+
+            ["Font"] = Enum.Font.SourceSans,
+        },
+    },
+
+    Black = RGB(0, 0, 0),
+    White = RGB(255, 255, 255),
+
+    Paths = {
+        ["Folder"] = "..\\LunalUI",
+        ["Data"] = "\\Data",
+        ["Themes"] = "\\Themes",
+    },
+
+    ScreenUI = nil,
+};
+
+local function BuildConnection(func, ...)
+    local args = { ... };
+    local function newFunc()
+        func(unpack(args));
+    end;
+
+    return newFunc;
+end;
+
+local function Colorize(Object, Color)
+    if typeof(Color) == "ColorSequence" then
+        local Colored = Object:FindFirstChildOfClass("UiGradient") or Instance.new("UIGradient");
+        Colored.Parent = Object;
+        Colored.Color = Color;
+        return Colored;
+    else
+        return;
+    end;
+end;
+
+function Library:Register(Obj, Properties)
+    if (not Obj) or (not Properties) then return; end;
+
+    local Data = {
+        Instance = Obj,
+        Properties = Properties,
+    };
+
+    self.Cache[Obj] = Data;
+end;
+
+function Library:Unregister(Obj)
+    if not Obj then return; end;
+    self.Cache[Obj] = nil;
+end;
+
+function Library.GetColor(a)
+    local Theme = Library.Theme;
+    local Themes = Library.Themes;
+    local CTheme = Themes[Theme];
+
+    if not CTheme then return nil; end
+    return CTheme[a] or nil;
+end;
+
+function UpdateColors()
+    local Theme = Library.Theme;
+    local Themes = Library.Themes;
+    local CTheme = Themes[Theme];
+
+    if not CTheme then return; end;
+
+    for _, v in pairs(Library.Cache) do
+        local Obj = v.Instance;
+        local Properties = v.Properties;
+
+        for idx, val in next, (Properties) do
+            if CTheme[val] then
+                if typeof(CTheme[val]) == "ColorSequence" then
+                    Colorize(Obj, CTheme[val]);
+                    continue;
+                end;
+
+                Obj[idx] = CTheme[val];
+            elseif Library[val] then
+                if typeof(Library[val]) == "ColorSequence" then
+                    Colorize(Obj, Library[val]);
+                    continue;
+                end;
+
+                Obj[idx] = Library[val];
+            end;
+        end;
+    end;
+end;
+
+RunService.Heartbeat:Connect(UpdateColors);
+
+function Library.Create(Class, Properties, Reg)
+    local _Instance = Class;
+
+    if type(Class) == 'string' then
+        _Instance = Instance.new(Class);
+    end;
+
+    for Property, Value in next, Properties do
+        _Instance[Property] = Value;
+    end;
+
+    pcall(function()
+        _Instance.BorderSizePixel = 0;
+    end);
+
+    if Reg then
+        Library:Register(_Instance, Reg);
+    end;
+
+    return _Instance;
+end;
+
+function Library:ApplyRatio(Obj, Ratio, Axis)
+    if not Obj then return; end;
+    local Ratio = Ratio or 1;
+    local Axis = Axis or "Height";
+
+    local AspectRatio = Library.Create("UIAspectRatioConstraint", {
+        Parent = Obj,
+        AspectType = Enum.AspectType.ScaleWithParentSize,
+        DominantAxis = Enum.DominantAxis[Axis],
+        AspectRatio = Ratio,
+    });
+
+    return AspectRatio;
+end;
+
+function Library:ApplyStroke(Obj, Reg, Thickness, Type, Border)
+    if not Obj then return; end;
+
+    Thickness = Thickness or 1;
+    Type = Type or "Miter";
+
+    local Stroke = Library.Create("UIStroke", {
+        Parent = Obj,
+        LineJoinMode = Enum.LineJoinMode[Type],
+        ApplyStrokeMode = (Border and Enum.ApplyStrokeMode.Border) or Enum.ApplyStrokeMode.Contextual,
+        Thickness = Thickness,
+    }, { Color = Reg });
+
+    return Stroke;
+end;
+
+function Library:ApplyPadding(Obj, Pixels)
+    if not Obj then return; end;
+
+    local UIPadding = Library.Create("UIPadding", {
+        Parent = Obj,
+        PaddingBottom = UDim.new(0, Pixels),
+        PaddingLeft = UDim.new(0, Pixels),
+        PaddingRight = UDim.new(0, Pixels),
+        PaddingTop = UDim.new(0, Pixels)
+    })
+
+    return UIPadding;
+end;
+
+function Library:ApplyCorner(Obj, Pixels)
+    if not Obj then return; end;
+
+    local UICorner = Library.Create("UICorner", {
+        Parent = Obj,
+        CornerRadius = UDim.new(0, Pixels or 6),
+    })
+
+    return UICorner;
+end;
+
+function Library:ApplyTextSize(Obj, Size)
+    if not Obj then return; end;
+
+    Obj.TextScaled = true;
+    local TextSizeConstraint = Library.Create("UITextSizeConstraint", {
+        Parent = Obj,
+        MaxTextSize = Size or 18,
+    });
+
+    return TextSizeConstraint;
+end;
+
+function Library:ApplyClick(Obj)
+    if not Obj then return; end;
+
+    local ClickButton = Library.Create("TextButton", {
+        Parent = Obj,
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        TextTransparency = 1,
+        Text = "",
+    });
+
+    return ClickButton;
+end
+
+-- Form UI
+
+function Library:CreateWindow(WINFO)
+    local Window = WINFO or { Name = "Window", Visible = true, Load = false };
+    Window.Name = Window.Name or "Window";
+    Window.Visible = Window.Visible or false;
+    Window.Load = Window.Load or false;
+
+    local ScreenGui = Library.Create("ScreenGui", { Parent = CoreGui, ZIndexBehavior = "Global" });
+    Library['ScreenGui'] = ScreenGui;
+
+    local Background = Library.Create("Frame", {
+        Parent = ScreenGui,
+        AnchorPoint = Vector2.new(.5, .5),
+        Position = UDim2.new(.5, 0, .5, 0),
+        Size = UDim2.new(0, 500, 0, 400),
+    }, { BackgroundColor3 = "Background" });
+
+    Library.Create("UIDragDetector", {
+        Parent = Background,
+    });
+
+    local Inside = Library.Create("Frame", {
+        Parent = Background,
+        AnchorPoint = Vector2.new(.5, .5),
+        Position = UDim2.new(.5, 0, .5, 0),
+        Size = UDim2.new(1, 0, 1, 0),
+    }, { BackgroundColor3 = "Background2" });
+
+    Library:ApplyStroke(Background, "Accent1");
+    Library:ApplyPadding(Background, 5);
+    Library:ApplyStroke(Inside, "Accent1");
+    Library:ApplyPadding(Inside, 5);
+
+    Library:ApplyCorner(Library.Create("Frame", {
+        Parent = Inside,
+        AnchorPoint = Vector2.new(0, .5),
+        Position = UDim2.new(.2, 0, .5, 0),
+        Size = UDim2.new(0, 2, 1, 0),
+    }, { BackgroundColor3 = "Accent2" }), 6); -- Line
+
+    -- Left Side
+
+    local Left = Library.Create("Frame", {
+        Parent = Inside,
+        AnchorPoint = Vector2.new(0, 1),
+        Position = UDim2.new(0, 0, 1, 0),
+        Size = UDim2.new(.2, 0, 1, 0),
+        BackgroundTransparency = 1,
+    });
+
+    Library.Create("UIPadding", {
+        Parent = Left,
+        PaddingLeft = UDim.new(0, 2),
+        PaddingRight = UDim.new(0, 7),
+    });
+
+    local LeftMain = Library.Create("Frame", {
+        Parent = Left,
+        AnchorPoint = Vector2.new(0.5, 1),
+        Position = UDim2.new(0.5, 0, 1, 0),
+        Size = UDim2.new(1, 0, .875, 0),
+    }, { BackgroundColor3 = "Background3" });
+
+    local LeftTop = Library.Create("Frame", {
+        Parent = Left,
+        Size = UDim2.new(1, 0, .1, 0),
+    }, { BackgroundColor3 = "Background3" });
+
+    local Title = Library.Create("TextLabel", {
+        Parent = LeftTop,
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Text = "<b><i>" .. Window.Name .. "</i></b>",
+        RichText = true,
+    }, { TextColor3 = "Text2", Font = "Font" });
+
+    Title.FontFace.Weight = Enum.FontWeight.Bold;
+    Title.FontFace.Style = Enum.FontStyle.Italic;
+
+    Library:ApplyTextSize(Title);
+    Library.Create("UIListLayout",
+        {
+            Parent = LeftMain,
+            HorizontalAlignment = Enum.HorizontalAlignment.Center,
+            SortOrder = Enum.SortOrder
+                .LayoutOrder
+        });
+    Library:ApplyStroke(LeftMain, "Accent2");
+    Library:ApplyStroke(LeftTop, "Accent2");
+
+    -- Right Side
+
+    local Right = Library.Create("Frame", {
+        Parent = Inside,
+        AnchorPoint = Vector2.new(1, 1),
+        Position = UDim2.new(1, 0, 1, 0),
+        Size = UDim2.new(.8, 0, 1, 0),
+        BackgroundTransparency = 1,
+    });
+
+    Library.Create("UIPadding", {
+        Parent = Right,
+        PaddingLeft = UDim.new(0, 9),
+        PaddingRight = UDim.new(0, 2),
+    });
+
+    local RightMain = Library.Create("Frame", {
+        Parent = Right,
+        AnchorPoint = Vector2.new(0.5, 1),
+        Position = UDim2.new(0.5, 0, 1, 0),
+        Size = UDim2.new(1, 0, .875, 0),
+    }, { BackgroundColor3 = "Background3" });
+
+    local RightTop = Library.Create("Frame", {
+        Parent = Right,
+        Size = UDim2.new(1, 0, .1, 0),
+    }, { BackgroundColor3 = "Background3" });
+
+    local Searchbar = Library.Create("TextBox", {
+        Parent = RightTop,
+        Size = UDim2.new(.4, 0, .9, 0),
+        Position = UDim2.new(1, -2, .5, 0),
+        AnchorPoint = Vector2.new(1, .5),
+        PlaceholderText = "Searchbar",
+        Text = "",
+    }, { PlaceholderColor3 = "Text2", TextColor3 = "Text2", Font = "Font", BackgroundColor3 = "Background2" });
+
+    Library:ApplyTextSize(Searchbar);
+    Searchbar.FontFace.Weight = Enum.FontWeight.Bold;
+    Searchbar.FontFace.Style = Enum.FontStyle.Italic;
+
+    local TabTitle = Library.Create("TextLabel", {
+        Parent = RightTop,
+        Size = UDim2.new(.6, 0, 1, 0),
+        Text = "<b><i>// Home</i></b>",
+        RichText = true,
+        BackgroundTransparency = 1,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    }, { Font = "Font", TextColor3 = "Text2" });
+
+    Library.Create("UIPadding", {
+        Parent = TabTitle,
+        PaddingLeft = UDim.new(0, 10),
+    });
+
+    Library:ApplyTextSize(TabTitle);
+    TabTitle.FontFace.Weight = Enum.FontWeight.Bold;
+    TabTitle.FontFace.Style = Enum.FontStyle.Italic;
+
+    Library:ApplyCorner(Searchbar, 8);
+    Library:ApplyStroke(Searchbar, "Accent2", nil, "Round", true);
+    Library:ApplyPadding(RightMain, 5);
+    Library:ApplyStroke(RightMain, "Accent2");
+    Library:ApplyStroke(RightTop, "Accent2");
+    Library.Create("UIListLayout",
+        {
+            Parent = RightMain,
+            HorizontalAlignment = Enum.HorizontalAlignment.Center,
+            SortOrder = Enum.SortOrder
+                .LayoutOrder
+        });
+
+    function Window:Exit()
+        ScreenGui:Destroy();
+
+        for _, v in pairs(Library.Toggles) do
+            v:SetValue();
+        end;
+
+        for _, v in pairs(Library.Binds) do
+            v:SetKey();
+        end;
+    end;
+
+    function Window:Visibility(Tog)
+        Tog = ((Tog ~= nil) and Tog) or not ScreenGui.Enabled;
+        ScreenGui.Enabled = Tog;
+    end;
+
+    local Tabs = {};
+    function Window:CreateTab(TINFO)
+        local Tab = TINFO or { Name = "Tab", Icon = nil };
+        Tab.Name = Tab.Name or "Tab";
+
+        -- TB = Tab Button
+        local TB_Frame = Library.Create("Frame", {
+            Parent = LeftMain,
+            Size = UDim2.new(1, 0, .1, 0),
+            BackgroundTransparency = 1,
+        }, { BackgroundColor3 = "Accent1" });
+
+        Library:ApplyPadding(TB_Frame, 5);
+
+        local TB_Line = Library.Create("Frame", {
+            Parent = TB_Frame,
+            AnchorPoint = Vector2.new(.5, 1),
+            Position = UDim2.new(.5, 0, 1, 2),
+            Size = UDim2.new(0, 0, 0, 1),
+            Visible = false,
+        }, { BackgroundColor3 = "Text" });
+
+        local TBI = Library.Create("Frame", {
+            Parent = TB_Frame,
+            AnchorPoint = Vector2.new(1, 0),
+            BackgroundTransparency = 1,
+            Size = UDim2.new(.4, 0, 1, 0),
+            Position = UDim2.new(1, 0, 0, 0),
+        });
+
+        Library:ApplyRatio(Library.Create("ImageLabel", {
+            Parent = TBI,
+            AnchorPoint = Vector2.new(1, .5),
+            BackgroundTransparency = 1,
+            Position = UDim2.new(1, 0, .5, 0),
+            Size = UDim2.new(.6, 0, .6, 0),
+            Image = Tab.Icon,
+            Visible = (Tab.Icon ~= nil),
+        }, { ImageColor3 = "Icons" }), 1, "Width");
+
+        Library:ApplyTextSize(Library.Create("TextLabel", {
+            Parent = TB_Frame,
+            Size = (Tab.Icon and UDim2.new(.6, 0, 1, 0)) or UDim2.new(1, 0, 1, 0),
+            Text = "<b><i>" .. Tab.Name .. "</i></b>",
+            RichText = true,
+            BackgroundTransparency = 1,
+        }, { Font = "Font", TextColor3 = "Text" }));
+
+        -- TF = Tab Frame
+
+        local TF = Library.Create("ScrollingFrame", {
+            Parent = RightMain,
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 1, 0),
+            Visible = false,
+            AutomaticCanvasSize = Enum.AutomaticSize.Y,
+            CanvasSize = UDim2.new(0, 0, 1, 0),
+            ScrollBarThickness = 1,
+        }, { ScrollBarImageColor3 = "Icons" });
+
+        Library.Create("UIListLayout",
+            {
+                Parent = TF,
+                HorizontalAlignment = Enum.HorizontalAlignment.Center,
+                Padding = UDim.new(0, 10),
+                SortOrder =
+                    Enum.SortOrder.LayoutOrder
+            });
+
+        Library.Create("Frame", { -- Spacer
+            Parent = TF,
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 0, 25),
+            LayoutOrder = 999999999,
+        });
+
+        table.insert(Tabs, { TF, TB_Line, TB_Frame });
+
+        function Tab.Focus()
+            local TweenInfo = TweenInfo.new(.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut);
+            for _, v in pairs(Tabs) do
+                if v[3] == TB_Frame then continue; end;
+
+                v[1].Visible = false;
+                task.spawn(function()
+                    local Tween = TweenService:Create(v[2], TweenInfo, { Size = UDim2.new(0, 0, 0, 1) });
+                    Tween:Play();
+                    Tween.Completed:Wait()
+                    v[2].Visible = false;
+                end);
+
+                TweenService:Create(v[3], TweenInfo, { BackgroundTransparency = 1 }):Play();
+            end;
+
+            TF.Visible = true;
+            TB_Line.Visible = true;
+            TweenService:Create(TB_Frame, TweenInfo, { BackgroundTransparency = .8 }):Play();
+            TweenService:Create(TB_Line, TweenInfo, { Size = UDim2.new(1, 4, 0, 1) }):Play();
+            TabTitle.Text = "<b><i>// " .. Tab.Name .. "</i></b>";
+        end;
+
+        if #Tabs == 1 then Tab.Focus(); end;
+
+        local TB_Click = Library:ApplyClick(TB_Frame);
+        if not TB_Click then
+            warn("Failed to form TB_Click | Lunal"); return
+        end;
+        TB_Click.MouseButton1Up:Connect(Tab.Focus);
+
+        function Tab:CreateSection(SINFO)
+            local Section = SINFO or { Name = "Section" };
+            Section.Name = Section.Name or "Section";
+
+            -- SF = Section Frame
+            local SF = Library.Create("Frame", {
+                Parent = TF,
+                Size = UDim2.new(1, 0, 0, 100),
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundTransparency = 1,
+            });
+
+            Library:ApplyPadding(SF, 5);
+            Library.Create("UIListLayout",
+                {
+                    Parent = SF,
+                    Padding = UDim.new(0, 5),
+                    HorizontalAlignment = Enum.HorizontalAlignment.Center,
+                    SortOrder =
+                        Enum.SortOrder.LayoutOrder
+                });
+
+            local SF_Top = Library.Create("Frame", {
+                Parent = SF,
+                LayoutOrder = -999999999,
+                Size = UDim2.new(1, 0, 0, 30),
+                BackgroundTransparency = 1,
+            });
+
+            local SF_Line = Library.Create("Frame",
+                {
+                    Parent = SF_Top,
+                    AnchorPoint = Vector2.new(0, 1),
+                    Position = UDim2.new(0, 0, 1, 0),
+                    Size = UDim2.new(1,
+                        0, 0, 2)
+                }, { BackgroundColor3 = "Tone" });
+            Library:ApplyCorner(SF_Line, 6);
+            Library:ApplyStroke(SF_Line, "Accent2", nil, "Round")
+            Library:ApplyTextSize(Library.Create("TextLabel",
+                {
+                    Parent = SF_Top,
+                    BackgroundTransparency = 1,
+                    Size = UDim2.new(1, 0, 1, 0),
+                    Text = "<b><i>\\\\ " ..
+                        Section.Name .. "</i></b>",
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    RichText = true
+                },
+                { Font = "Font", TextColor3 = "Text" })); -- Text
+
+            local SF_Main = Library.Create("Frame", {
+                Parent = SF,
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundTransparency = 1,
+                Size = UDim2.new(1, -5, 0, 0),
+            });
+
+            Library.Create("UIListLayout",
+                {
+                    Parent = SF_Main,
+                    Padding = UDim.new(0, 5),
+                    HorizontalAlignment = Enum.HorizontalAlignment.Center,
+                    SortOrder =
+                        Enum.SortOrder.LayoutOrder
+                });
+
+            function Section:AddLabel(LINFO)
+                local Label = LINFO or { Text = "Text", Alignment = "Center", Flag = nil }; -- Center / Left / Right
+                Label.Text = Label.Text or "Text";
+                Label.Alignment = Label.Alignment or "Center";
+
+                local LF = Library.Create("Frame", {
+                    Parent = SF_Main,
+                    Size = UDim2.new(1, 0, 0, 25),
+                    BackgroundTransparency = 1,
+                });
+
+                local LF_Label = Library.Create("TextLabel", {
+                    Parent = LF,
+                    Size = UDim2.new(1, 0, 1, 0),
+                    Text = "<b><i>" .. Label.Text .. "</i></b>",
+                    BackgroundTransparency = 1,
+                    TextXAlignment = (Enum.TextXAlignment[Label.Alignment]) or (Enum.TextXAlignment["Center"]),
+                    RichText = true,
+                }, { Font = "Font", TextColor3 = "Text" });
+
+                Library:ApplyTextSize(LF_Label, 14);
+                Library:ApplyStroke(LF_Label);
+                Library.Create("UIPadding", {
+                    Parent = LF_Label,
+                    PaddingLeft = UDim.new(0, 5),
+                    PaddingRight = UDim.new(0, 5),
+                });
+
+                function Label:SetText(Text)
+                    LF_Label.Text = (Text and "<b><i>" .. Text .. "</i></b>") or "";
+                end;
+            end;
+
+            function Section:AddButton(BINFO)
+                local Button = BINFO or { Text = "Button", Alignment = "Center", Callback = function(...) end };
+                Button.Text = Button.Text or "Button";
+                Button.Alignment = Button.Alignment or "Center";
+                Button.Callback = Button.Callback or function(...) end;
+
+                local BF = Library.Create("Frame", {
+                    Parent = SF_Main,
+                    Size = UDim2.new(1, 0, 0, 25),
+                }, { BackgroundColor3 = "Tone" });
+
+                Library:ApplyCorner(BF, 4);
+
+                local BF_Label = Library.Create("TextLabel", {
+                    Parent = BF,
+                    Size = UDim2.new(.8, 0, 1, 0),
+                    Text = "<b><i>" .. Button.Text .. "</i></b>",
+                    BackgroundTransparency = 1,
+                    TextXAlignment = (Enum.TextXAlignment[Button.Alignment]) or (Enum.TextXAlignment["Center"]),
+                    RichText = true,
+                }, { Font = "Font", TextColor3 = "Text" });
+
+                Library:ApplyTextSize(BF_Label);
+
+                local BF_Outline = Library:ApplyStroke(BF, "Accent2", nil, "Round");
+
+                local BFI = Library.Create("Frame", {
+                    Parent = BF,
+                    Position = UDim2.new(1, 0, .5, 0),
+                    AnchorPoint = Vector2.new(1, .5),
+                    Size = UDim2.new(.2, 0, 1, 0),
+                    BackgroundTransparency = 1,
+                });
+
+                Library:ApplyRatio(BFI);
+
+                Library.Create("ImageLabel", {
+                    Parent = BFI,
+                    Position = UDim2.new(1, -5, .5, 0),
+                    Size = UDim2.new(.8, 0, .8, 0),
+                    AnchorPoint = Vector2.new(1, .5),
+                    BackgroundTransparency = 1,
+                    Image = "rbxassetid://16898729337",
+                    ImageRectOffset = Vector2.new(0, 514),
+                    ImageRectSize = Vector2.new(256, 256),
+                }, { ImageColor3 = "Icons" });
+
+                Library:ApplyTextSize(BF_Label);
+                Library:ApplyStroke(BF_Label);
+                Library.Create("UIPadding", {
+                    Parent = BF_Label,
+                    PaddingLeft = UDim.new(0, 5),
+                    PaddingRight = UDim.new(0, 5),
+                });
+
+                function Button.Fire()
+                    Button.Callback();
+                end;
+
+                local Click = Library:ApplyClick(BF);
+
+                Click.MouseEnter:Connect(BuildConnection(Library.Register, Library, BF_Outline, { Color = "Accent1" }));
+                Click.MouseLeave:Connect(function()
+                    Library:Register(BF_Outline, { Color = "Accent2" });
+                    task.spawn(function()
+                        task.wait(.05);
+                        Library:Register(BF, { BackgroundColor3 = "Tone" });
+                    end);
+                end);
+                Click.MouseButton1Down:Connect(BuildConnection(Library.Register, Library, BF,
+                    { BackgroundColor3 = "Background2" }));
+                Click.MouseButton1Up:Connect(function()
+                    task.spawn(function()
+                        Library:Register(BF, { BackgroundColor3 = "Background" });
+                        task.wait(.05);
+                        Library:Register(BF, { BackgroundColor3 = "Tone" });
+                    end);
+
+                    Button.Fire();
+                end);
+
+                return Button;
+            end;
+
+            function Section:AddToggle(TGINFO)
+                local Toggle = TGINFO or
+                    { Text = "Toggle", Alignment = "Center", Default = false, Callback = function(...) end };
+                Toggle.Text = Toggle.Text or "Toggle";
+                Toggle.Alignment = Toggle.Alignment or "Center";
+                Toggle.Default = Toggle.Default or false;
+                Toggle.Callback = Toggle.Callback or function(...) end;
+
+                Toggle.Value = Toggle.Default or false;
+
+                local TGF = Library.Create("Frame", {
+                    Parent = SF_Main,
+                    Size = UDim2.new(1, 0, 0, 25),
+                }, { BackgroundColor3 = "Tone" });
+
+                Library:ApplyCorner(TGF, 4);
+
+                table.insert(Library.Toggles, Toggle);
+
+                local TGF_Label = Library.Create("TextLabel", {
+                    Parent = TGF,
+                    Size = UDim2.new(.8, 0, 1, 0),
+                    Text = "<b><i>" .. Toggle.Text .. "</i></b>",
+                    BackgroundTransparency = 1,
+                    TextXAlignment = (Enum.TextXAlignment[Toggle.Alignment]) or (Enum.TextXAlignment["Center"]),
+                    RichText = true,
+                }, { Font = "Font", TextColor3 = "Text" });
+
+                Library:ApplyTextSize(TGF_Label);
+
+                local TGF_Outline = Library:ApplyStroke(TGF, "Accent2", nil, "Round");
+
+                local TFI = Library.Create("Frame", {
+                    Parent = TGF,
+                    Position = UDim2.new(1, 0, .5, 0),
+                    AnchorPoint = Vector2.new(1, .5),
+                    Size = UDim2.new(.2, 0, 1, 0),
+                    BackgroundTransparency = 1,
+                });
+
+                Library:ApplyRatio(TFI);
+
+                local TFI_Holder = Library.Create("Frame", {
+                    Parent = TFI,
+                    Position = UDim2.new(1, -5, .5, 0),
+                    Size = UDim2.new(.8, 0, .8, 0),
+                    AnchorPoint = Vector2.new(1, .5),
+                }, { BackgroundColor3 = "Background2" });
+
+                Library:ApplyCorner(TFI_Holder, 6);
+
+                local TogIcon = Library.Create("ImageLabel", {
+                    Parent = TFI_Holder,
+                    Position = UDim2.new(.5, 0, .5, 0),
+                    Size = UDim2.new(.8, 0, .8, 0),
+                    AnchorPoint = Vector2.new(.5, .5),
+                    BackgroundTransparency = 1,
+                    Image = "rbxassetid://16898617411",
+                    ImageRectOffset = Vector2.new(257, 0),
+                    ImageRectSize = Vector2.new(256, 256),
+                    Visible = Toggle.Value or false,
+                }, { ImageColor3 = "Icons" });
+
+
+                Library:ApplyTextSize(TGF_Label);
+                Library:ApplyStroke(TGF_Label);
+                Library.Create("UIPadding", {
+                    Parent = TGF_Label,
+                    PaddingLeft = UDim.new(0, 5),
+                    PaddingRight = UDim.new(0, 5),
+                });
+
+                function Toggle.Fire()
+                    Toggle:SetValue(not Toggle.Value);
+                end;
+
+                function Toggle:SetValue(NewValue)
+                    Toggle.Value = (NewValue == true) or false;
+                    TogIcon.Visible = Toggle.Value;
+
+                    Toggle.Callback(Toggle.Value);
+                end;
+
+                Toggle:SetValue(Toggle.Default);
+                local Click = Library:ApplyClick(TGF);
+
+                Click.MouseEnter:Connect(BuildConnection(Library.Register, Library, TGF_Outline, { Color = "Accent1" }));
+                Click.MouseLeave:Connect(BuildConnection(Library.Register, Library, TGF_Outline, { Color = "Accent2" }));
+                Click.MouseButton1Up:Connect(Toggle.Fire);
+
+                return Toggle;
+            end;
+
+            function Section:AddKeybind(KINFO)
+                local Binder = KINFO or
+                    { Text = "Keybind", Alignment = "Center", Default = nil, Callback = function(...) end };
+                Binder.Text = Binder.Text or "Keybind";
+                Binder.Alignment = Binder.Alignment or "Center";
+                Binder.Default = Binder.Default or nil;
+                Binder.Callback = Binder.Callback or function(...) end;
+
+                Binder.Value = Binder.Default or nil;
+
+                table.insert(Library.Binds, Binder);
+
+                local KF = Library.Create("Frame", {
+                    Parent = SF_Main,
+                    Size = UDim2.new(1, 0, 0, 25),
+                }, { BackgroundColor3 = "Tone" });
+
+                Library:ApplyCorner(KF, 4);
+
+                local KF_Label = Library.Create("TextLabel", {
+                    Parent = KF,
+                    Size = UDim2.new(.8, 0, 1, 0),
+                    Text = "<b><i>" .. Binder.Text .. "</i></b>",
+                    BackgroundTransparency = 1,
+                    TextXAlignment = (Enum.TextXAlignment[Binder.Alignment]) or (Binder.TextXAlignment["Center"]),
+                    RichText = true,
+                }, { Font = "Font", TextColor3 = "Text" });
+
+                Library:ApplyTextSize(KF_Label);
+
+                local KF_Outline = Library:ApplyStroke(KF, "Accent2", nil, "Round");
+
+                local KFI = Library.Create("Frame", {
+                    Parent = KF,
+                    Position = UDim2.new(1, 0, .5, 0),
+                    AnchorPoint = Vector2.new(1, .5),
+                    Size = UDim2.new(.2, 0, 1, 0),
+                    BackgroundTransparency = 1,
+                });
+
+                Library:ApplyRatio(KFI, 2);
+
+                local KFI_Holder = Library.Create("Frame", {
+                    Parent = KFI,
+                    Position = UDim2.new(1, -5, .5, 0),
+                    Size = UDim2.new(.8, 0, .8, 0),
+                    AnchorPoint = Vector2.new(1, .5),
+                }, { BackgroundColor3 = "Background2" });
+
+                Library:ApplyCorner(KFI_Holder, 6);
+
+                local KFI_Label = Library.Create("TextLabel", {
+                    Parent = KFI_Holder,
+                    Position = UDim2.new(.5, 0, .5, 0),
+                    Size = UDim2.new(1, 0, 1, 0),
+                    AnchorPoint = Vector2.new(.5, .5),
+                    BackgroundTransparency = 1,
+                    Text = (Binder.Value and "<b><i>" .. Binder.Value .. "</i></b>") or " ",
+                    RichText = true,
+                }, { Font = "Font", TextColor3 = "Text" });
+
+                Library:ApplyPadding(KFI_Label, 5);
+                Library:ApplyTextSize(KFI_Label, 24);
+
+                Library:ApplyTextSize(KF_Label);
+                Library:ApplyStroke(KF_Label);
+                Library.Create("UIPadding", {
+                    Parent = KF_Label,
+                    PaddingLeft = UDim.new(0, 5),
+                    PaddingRight = UDim.new(0, 5),
+                });
+
+                local Old;
+                function Binder:SetKey(Key)
+                    Binder.Value = Key;
+                    KFI_Label.Text = (Key and "<b><i>" .. Key .. "</i></b>") or " ";
+
+                    if Old then Old:Disconnect(); end; Old = nil;
+                    if not Key then return; end;
+
+                    local function Fire()
+                        Binder.Callback();
+                    end;
+
+                    Old = InputService:Record(false, {
+                        Type = "KeyCode",
+                        CancelKeys = {},
+                        Inputs = { Key },
+
+                        Callback = Fire,
+                    });
+                end;
+
+                function Binder.Start()
+                    local Found = false;
+                    local function Recieved(Key)
+                        Binder:SetKey(Key);
+                        Found = true;
+                    end;
+
+                    InputService:Record(false, {
+                        Type = "KeyCode",
+                        Break = true,
+
+                        Callback = Recieved,
+                    });
+
+                    task.spawn(function()
+                        while not Found do
+                            for i = 1, 3 do
+                                if Found then break; end;
+                                if i == 1 then
+                                    KFI_Label.Text = ". "; task.wait(.5); continue;
+                                end;
+
+                                KFI_Label.Text = KFI_Label.Text .. ". ";
+
+                                task.wait(.5);
+                            end;
+                        end;
+                    end);
+                end;
+
+                local Click = Library:ApplyClick(KF);
+
+                Binder:SetKey(Binder.Default);
+                Click.MouseEnter:Connect(BuildConnection(Library.Register, Library, KF_Outline, { Color = "Accent1" }));
+                Click.MouseLeave:Connect(BuildConnection(Library.Register, Library, KF_Outline, { Color = "Accent2" }));
+                Click.MouseButton1Up:Connect(Binder.Start);
+
+                return Binder;
+            end;
+
+            return Section;
+        end;
+
+        return Tab;
+    end;
+
+    return Window;
+end;
+
+local RS = game:GetService("ReplicatedStorage");
+local Endpoints = RS:WaitForChild("endpoints");
+local cts = Endpoints:WaitForChild("client_to_server");
+local stc = Endpoints:WaitForChild("server_to_client");
+local Camera = workspace.CurrentCamera;
+
+getgenv().webhook = "https://discord.com/api/webhooks/1285020936919318623/mU1tULBtfwQza2v0pB0QYK3s5gPFmjEjxkBoF6oWRrpGbEKVzSv9TULdJrUak-8iAnXp"
+getgenv().WebhookEnabled = true 
+
+local Window = Library:CreateWindow();
+local Main = Window:CreateTab({ Name = "Main" });
+local BannerSection = Main:CreateSection({ Name = "Banner" });
+
+game:GetService("Players").LocalPlayer.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+    print("Prevented idle kick!")
+end)
+
+
+function sendWebhookEmbed(title, description, color, ping)
+    if not getgenv().WebhookEnabled or getgenv().webhook == "" then
+        warn("Webhook not enabled or URL is empty")
+        return
+    end
+
+    local requestFunction = syn and syn.request or http_request
+    if not requestFunction then
+        warn("Executor Issue")
+        return
+    end
+
+    local payload = {
+        Url = getgenv().webhook,
+        Method = "POST",
+        Headers = { ["Content-Type"] = "application/json" },
+        Body = game:GetService("HttpService"):JSONEncode({
+            content = ping and "<@1103561080300638262>" or nil, -- Ping only if shiny
+            embeds = {
+                {
+                    title = title,
+                    description = description,
+                    color = color,
+                    footer = { text = "Hawk Tuah Webhook System" },
+                }
+            }
+        })
+    }
+
+    local success, result = pcall(function()
+        return requestFunction(payload)
+    end)
+
+    if not success then
+        warn("Failed to send webhook: " .. tostring(result))
+    end
+end
+
+local Players = game:GetService("Players")
+local GC = getconnections or get_signal_cons
+	if GC then
+		for i,v in pairs(GC(Players.LocalPlayer.Idled)) do
+			if v["Disable"] then
+				v["Disable"](v)
+			elseif v["Disconnect"] then
+				v["Disconnect"](v)
+			end
+		end
+	else
+		Players.LocalPlayer.Idled:Connect(function()
+			local VirtualUser = game:GetService("VirtualUser")
+			VirtualUser:CaptureController()
+			VirtualUser:ClickButton2(Vector2.new())
+		end)
+	end
+
+local ANTIAFK = game.Players.LocalPlayer.Idled:Connect(function()
+					 game:FindService("VirtualUser"):Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+					 task.wait(1)
+					 game:FindService("VirtualUser"):Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+					 end)
+
+                     local function CheckNewUnit(Child)
+                        if not Child:IsA("ImageButton") then return end
+                    
+                        local UUID = Child:FindFirstChild("_uuid")
+                        local Name = Child:FindFirstChild("name")
+                        local Rainbow = Child:FindFirstChild("Border") and Child.Border:FindFirstChild("rainbow")
+                        local Cost = Child:FindFirstChild("Cost") and Child.Cost:FindFirstChild("text")
+                        local Shiny = Child:FindFirstChild("ClipFrameTemplate")
+                    
+                        if UUID and Name and Rainbow and Rainbow.Value then
+                            local description = "🎉 **MYTHIC RECEIVED!** 🎉\n"
+                                .. "🧙‍♂️ **Name**: " .. Name.Text .. "\n"
+                                .. "🆔 **ID**: " .. UUID.Value .. "\n"
+                                .. "💰 **Cost**: " .. (Cost and Cost.Text or "N/A") .. "\n"
+                    
+                            local isShiny = false
+                            if Shiny then
+                                isShiny = true
+                                description = description .. "✨ **Shiny**: Yes! 🎉\n"
+                            else
+                                description = description .. "✨ **Shiny**: No\n"
+                            end
+                    
+                            sendWebhookEmbed("Hawk Tuah", description, 0xFFFF00, isShiny)
+                        end
+                    end
+                    
+
+Cache.DescendantAdded:Connect(function(Child)
+    CheckNewUnit(Child)
+end)
+
+
+BannerSection:AddToggle({
+    Text = "Auto Summon",
+    Callback = function(Value)
+        getgenv().AutoRoll = Value;
+
+        while AutoRoll do
+            cts:WaitForChild("buy_from_banner"):InvokeServer("EventClover", "gems10");
+            task.wait();
+        end;
+    end
+});
+
+BannerSection:AddToggle({
+    Text = "Hide Star",
+    Callback = function(Value)
+        getgenv().HideStar = Value;
+
+        if HideStar then
+            StarConnection = Camera.ChildAdded:Connect(function(child)
+                if child.Name == "StarNew" then
+                    if Camera:FindFirstChild("DepthOfField") then
+                        Camera:FindFirstChild("DepthOfField").Enabled = true;
+                    end;
+
+                    child:Destroy();
+                end;
+            end);
+        else
+            if StarConnection then
+                StarConnection:Disconnect();
+                StarConnection = nil;
+            end;
+        end;
+    end
+})
+
+BannerSection:AddToggle({
+    Text = "Auto Sell",
+    Callback = function(Value)
+        getgenv().AutoSell = Value;
+    end,
+});
+
+BannerSection:AddToggle({
+    Text = "Auto Scrap",
+    Callback = function(Value)
+        getgenv().AutoScrap = Value;
+    end,
+});
+
+local Units = require(ReplicatedStorage.src.Data.Units);
+local Rarities = {
+    "Rare",
+    "Epic",
+    "Legendary",
+    "Mythic"
+};
+
+getgenv().aushduahsdua11 = aushduahsdua11 or stc:WaitForChild("unit_added").OnClientEvent:Connect(function(unit)
+    if unit and unit.unit_id and AutoRoll then
+        local id = unit.uuid;
+        local unit_info = Units[unit.unit_id];
+        local Found = table.find(Rarities, unit_info.rarity);
+
+        if Found then
+            if Found >= 3 then
+                if unit.shiny then
+                    if AutoScrap and Found == 3 then
+                        cts:WaitForChild("request_remove_shiny"):InvokeServer(id);
+                    else
+                        return;
+                    end;
+                end;
+            end;
+
+            if AutoSell then
+                cts:WaitForChild("sell_units"):InvokeServer({id});
+            end;
+        end;
+    end;
+end);
+
+sendWebhookEmbed("🌟 Test Webhook 🌟", "Alo", 0xFFD700)
+
+local Settings = Window:CreateTab({ Name = "Settings" });
+local UISection = Settings:CreateSection({ Name = "UI" });
+
+UISection:AddKeybind({ Text = "Hide UI Key", Callback = BuildConnection(Window.Visibility, Window), Default = "RightAlt" });
+UISection:AddButton({ Text = "Exit UI", Callback = BuildConnection(Window.Exit, Window) });
+
+
+
+return Library;
